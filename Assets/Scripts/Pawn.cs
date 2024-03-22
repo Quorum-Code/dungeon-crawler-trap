@@ -2,13 +2,29 @@ using UnityEngine;
 
 public class Pawn
 {
-    int x, z;
-    GameObject gameObject;
+    public readonly Point point;
 
-    public Pawn(int _x, int _z, GameObject _gameObject) 
+    protected float health;
+
+    protected int Str = 0;
+    protected int Dex = 0;
+    protected int Vit = 0;
+    protected int Int = 0;
+
+    protected GameObject gameObject;
+    protected Direction facing = Direction.North;
+
+    public Pawn(int x, int z, GameObject _gameObject) 
     {
-        x = _x; 
-        z = _z; 
+        point = new Point(x, z);
         gameObject = _gameObject;
+    }
+
+    protected enum Direction 
+    {
+        North,  // +z
+        East,   // +x
+        South,  // -z
+        West,   // -x
     }
 }

@@ -18,8 +18,12 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator animate;
 
+    PlayerPawn playerPawn;
+
     private void Start()
     {
+        playerPawn = new PlayerPawn(0, 0, gameObject);
+
         if (inputAsset == null)
         {
             Debug.LogError("no inputAsset on " + gameObject.name);
@@ -43,7 +47,10 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        dungeonControls.FindAction("Forward").performed += ForwardEvent;
+        dungeonControls.FindAction("Forward").started += ForwardEvent;
+        dungeonControls.FindAction("Right").started += RightEvent;
+        dungeonControls.FindAction("Backward").started += BackwardEvent;
+        dungeonControls.FindAction("Left").started += LeftEvent;
 
         dungeonControls.FindAction("TurnLeft").performed += TurnLeftEvent;
         dungeonControls.FindAction("TurnRight").performed += TurnRightEvent;
@@ -53,40 +60,68 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            TryMove(new Vector3(1, 0, 0));
+            TryMove(0, 1);
         }
-        else 
+    }
+
+    private void RightEvent(InputAction.CallbackContext context) 
+    {
+        if (context.phase == InputActionPhase.Started)
         {
-            Debug.Log(context.phase);
+            TryMove(1, 0);
+        }
+    }
+    private void BackwardEvent(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            TryMove(0, -1);
+        }
+    }
+
+    private void LeftEvent(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            TryMove(-1, 0);
         }
     }
 
     private void TurnLeftEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("Trying left turn");
-        TryTurn(new Vector3(0, -90f, 0));
+        TryTurn(true);
     }
 
     private void TurnRightEvent(InputAction.CallbackContext context)
     {   
-        TryTurn(new Vector3(0, 90f, 0));
+        TryTurn(false);
     }
 
-    private void TryMove(Vector3 delta) 
+    private void TryMove(int dx, int dz) 
     {
         if (animate == null) 
         {
-            animate = AnimateMove(delta);
+            playerPawn.Move(dx, dz);
+            animate = AnimateMove();
             StartCoroutine(animate);
         }
     }
 
-    private void TryTurn(Vector3 delta)
+    private void TryTurn(bool isLeftTurn)
     {
         if (animate == null)
         {
+            if (isLeftTurn)
+            {
+                playerPawn.TurnLeft();
+            }
+            else 
+            {
+                playerPawn.TurnRight();
+            }
+
             Debug.Log("animate == null");
-            animate = AnimateTurn(delta);
+            animate = AnimateTurn(isLeftTurn);
             StartCoroutine(animate);
         }
         else 
@@ -95,10 +130,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateMove(Vector3 delta) 
+    private IEnumerator AnimateMove() 
     {
         Vector3 init = gameObject.transform.position;
-        Vector3 post = init + delta;
+        Vector3 post = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
 
         float t = 0f;
         float end = 0.3f;
@@ -112,10 +147,10 @@ public class PlayerController : MonoBehaviour
         animate = null;
     }
 
-    private IEnumerator AnimateTurn(Vector3 delta)
+    private IEnumerator AnimateTurn(bool isLeftTurn)
     {
         Vector3 initRot = gameObject.transform.rotation.eulerAngles;
-        Vector3 postRot = initRot + delta;
+        Vector3 postRot = initRot + new Vector3(0, 90 * (isLeftTurn ? -1 : 1), 0);
 
         float t = 0f;
         float end = 0.3f;
