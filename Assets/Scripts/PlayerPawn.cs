@@ -4,31 +4,44 @@ using UnityEngine;
 
 public class PlayerPawn : Pawn
 {
-    public PlayerPawn(int x, int z, GameObject gameObject) : base(x, z, gameObject)
+    public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap)
     {
         
     }
 
     public bool Move(int dx, int dz) 
     {
+        Point nextPoint = MovePoint(dx, dz);
+
+        if (gameMap.canMoveTo(nextPoint))
+        {
+            point.Set(nextPoint);
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+    }
+
+    private Point MovePoint(int dx, int dz) 
+    {
         if (facing == Direction.North)
         {
-            point.Add(dx, dz);
-        } 
-        else if (facing == Direction.East) 
+            return new Point(point.x + dx, point.z + dz);
+        }
+        else if (facing == Direction.East)
         {
-            point.Add(dz, -dx);
+            return new Point(point.x + dz, point.z - dx);
         }
         else if (facing == Direction.South)
         {
-            point.Add(-dx, -dz);
+            return new Point(point.x - dx, point.z - dz);
         }
-        else if (facing == Direction.West)
+        else
         {
-            point.Add(-dz, dx);
+            return new Point(point.x - dz, point.z + dx);
         }
-
-        return true;
     }
 
     public void TurnLeft()

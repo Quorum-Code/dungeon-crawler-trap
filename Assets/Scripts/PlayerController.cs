@@ -20,16 +20,26 @@ public class PlayerController : MonoBehaviour
 
     PlayerPawn playerPawn;
 
-    private void Start()
+    [SerializeField] GameController gameController;
+
+    public void Ready() 
     {
-        playerPawn = new PlayerPawn(0, 0, gameObject);
+        if (gameController == null)
+        {
+            Debug.LogError("no gameController set");
+            Destroy(gameObject);
+        }
+        GameMap gm = gameController.GetGameMap();
+        playerPawn = new PlayerPawn(gm.spawn.x, gm.spawn.z, gameObject, gm);
+        transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
+
 
         if (inputAsset == null)
         {
             Debug.LogError("no inputAsset on " + gameObject.name);
             Destroy(gameObject);
         }
-        else 
+        else
         {
             ConnectInputEvents();
         }
@@ -101,9 +111,16 @@ public class PlayerController : MonoBehaviour
     {
         if (animate == null) 
         {
-            playerPawn.Move(dx, dz);
-            animate = AnimateMove();
-            StartCoroutine(animate);
+            bool ok = playerPawn.Move(dx, dz);
+            if (ok)
+            {
+                animate = AnimateMove();
+                StartCoroutine(animate);
+            }
+            else 
+            {
+                Debug.Log("failed move");
+            }
         }
     }
 
@@ -119,14 +136,8 @@ public class PlayerController : MonoBehaviour
             {
                 playerPawn.TurnRight();
             }
-
-            Debug.Log("animate == null");
             animate = AnimateTurn(isLeftTurn);
             StartCoroutine(animate);
-        }
-        else 
-        {
-            Debug.Log("animate != null");
         }
     }
 

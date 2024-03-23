@@ -11,13 +11,15 @@ public class Pawn
     protected int Vit = 0;
     protected int Int = 0;
 
+    protected GameMap gameMap;
     protected GameObject gameObject;
     protected Direction facing = Direction.North;
 
-    public Pawn(int x, int z, GameObject _gameObject) 
+    public Pawn(int x, int z, GameObject gameObject, GameMap gameMap) 
     {
         point = new Point(x, z);
-        gameObject = _gameObject;
+        this.gameObject = gameObject;
+        this.gameMap = gameMap;
     }
 
     protected enum Direction 
