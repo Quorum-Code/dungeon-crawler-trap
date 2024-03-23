@@ -23,8 +23,8 @@ public class GameMap
 
     public GameMap(GameObject floorPrefab, GameObject wallPrefab) 
     {
-        width = 10;
-        length = 10;
+        width = 32;
+        length = 32;
 
         this.floorPrefab = floorPrefab;
         this.wallPrefab = wallPrefab;
@@ -33,10 +33,10 @@ public class GameMap
         floor.transform.position = new Vector3(width / 2, 0, length / 2);
         floor.transform.localScale = new Vector3(floor.transform.localScale.x * width + 1, floor.transform.localScale.y * 1f, floor.transform.localScale.x * length + 1);
 
-        GameObject ceiling = GameObject.Instantiate(floorPrefab);
-        ceiling.transform.position = new Vector3(width / 2, 1, length / 2);
-        ceiling.transform.rotation = Quaternion.Euler(180, 0, 0);
-        ceiling.transform.localScale = new Vector3(ceiling.transform.localScale.x * width + 1, ceiling.transform.localScale.y * 1f, ceiling.transform.localScale.x * length + 1);
+        //GameObject ceiling = GameObject.Instantiate(floorPrefab);
+        //ceiling.transform.position = new Vector3(width / 2, 1, length / 2);
+        //ceiling.transform.rotation = Quaternion.Euler(180, 0, 0);
+        //ceiling.transform.localScale = new Vector3(ceiling.transform.localScale.x * width + 1, ceiling.transform.localScale.y * 1f, ceiling.transform.localScale.x * length + 1);
 
         map = new Tile[width, length];
         for (int i = 0; i < width; i++) 
@@ -56,9 +56,11 @@ public class GameMap
     private class Walker 
     {
         GameMap map;
-        int x, z;
-        int dx, dz;
-        int steps = 0;
+        public int x { get; private set; }
+        public int z { get; private set; }
+        public int dx { get; private set; }
+        public int dz { get; private set; }
+        public int steps = 0;
 
         public Walker(int x, int z, int dx, int dz, GameMap map) 
         {
@@ -67,6 +69,15 @@ public class GameMap
             this.dx = dx;
             this.dz = dz;
             this.map = map;
+        }
+
+        public Walker(Walker walker) 
+        {
+            this.x = walker.x;
+            this.z = walker.z;
+            this.dx = walker.dx;
+            this.dz = walker.dz;
+            this.map = walker.map;
         }
 
         public bool Walk() 
@@ -81,26 +92,80 @@ public class GameMap
             // Stop walking if found another path
             if (!map.inBounds(new Point(nx, nz)) || map.map[nx, nz].isPassable) 
             {
-                return false;
+                Turn();
+                nx = x + dx;
+                nz = z + dz;
+                if (!map.inBounds(new Point(nx, nz)) || map.map[nx, nz].isPassable)
+                    return false;
             }
             x = nx;
             z = nz;
             map.map[nx, nz].SetPassable(true);
             return true;
         }
+
+        public void Turn() 
+        {
+            float r = Random.Range(0f, 1f);
+
+            if (r < .5f)
+            {
+                if (dx == 0)
+                {
+                    dz = 0;
+                    dx = 1;
+                }
+                else 
+                {
+                    dx = 0;
+                    dz = 1;
+                }
+            }
+            else 
+            {
+                if (dx == 0)
+                {
+                    dz = 0;
+                    dx = -1;
+                }
+                else
+                {
+                    dx = 0;
+                    dz = -1;
+                }
+            }
+        }
     }
 
     private void RandomWalk() 
     {
         List<Walker> walkers = new List<Walker>();
-        walkers.Add(new Walker(width/2, 0, 0, 1, this));
+        walkers.Add(new Walker(width / 2, 0, 0, 1, this));
+        walkers.Add(new Walker(width / 2, 1, 1, 0, this));
+        walkers.Add(new Walker(width / 2, 1, -1, 0, this));
+        walkers.Add(new Walker(width / 2, 1, 0, 1, this));
 
         while (walkers.Count > 0) 
         {
             List<Walker> toRemove = new List<Walker>();
+            List<Walker> toAdd = new List<Walker>();
 
+            float r = 0f;
             foreach (Walker walker in walkers) 
             {
+                r = Random.Range(0f, 1f);
+
+                if (r < .15f)
+                {
+                    Walker w = new Walker(walker);
+                    w.Turn();
+                    toAdd.Add(w);
+                }
+                else if (r < .3f) 
+                {
+                    walker.Turn();
+                }
+
                 if (!walker.Walk())
                     toRemove.Add(walker);
             }
@@ -109,6 +174,7 @@ public class GameMap
             {
                 walkers.Remove(walker);
             }
+            walkers.AddRange(toAdd);
         }
     }
 

@@ -114,12 +114,16 @@ public class PlayerController : MonoBehaviour
             bool ok = playerPawn.Move(dx, dz);
             if (ok)
             {
+                // move
                 animate = AnimateMove();
                 StartCoroutine(animate);
             }
             else 
             {
-                Debug.Log("failed move");
+                // bump
+                animate = AnimateBump(dx, dz);
+                StartCoroutine(animate);
+                Debug.Log("bumping");
             }
         }
     }
@@ -155,6 +159,33 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         gameObject.transform.position = post;
+        animate = null;
+    }
+
+    private IEnumerator AnimateBump(int dx, int dz) 
+    {
+        Point rel = playerPawn.InputToPoint(dx, dz);
+
+        Vector3 init = gameObject.transform.position;
+        Vector3 post = init + new Vector3(rel.x * .2f, 0, rel.z * .2f);
+
+        float t = 0f;
+        float end = 0.15f;
+        while (t < end)
+        {
+            t += Time.deltaTime;
+            gameObject.transform.position = Vector3.Lerp(init, post, t / end);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < end)
+        {
+            t += Time.deltaTime;
+            gameObject.transform.position = Vector3.Lerp(post, init, t / end);
+            yield return null;
+        }
+        gameObject.transform.position = init;
         animate = null;
     }
 

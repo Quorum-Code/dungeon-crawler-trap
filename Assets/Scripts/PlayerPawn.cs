@@ -44,6 +44,26 @@ public class PlayerPawn : Pawn
         }
     }
 
+    public Point InputToPoint(int dx, int dz) 
+    {
+        if (facing == Direction.North)
+        {
+            return new Point(dx, dz);
+        }
+        else if (facing == Direction.East)
+        {
+            return new Point(dz, -dx);
+        }
+        else if (facing == Direction.South)
+        {
+            return new Point(-dx, -dz);
+        }
+        else
+        {
+            return new Point(-dz, dx);
+        }
+    }
+
     public void TurnLeft()
     {
         switch(facing)
