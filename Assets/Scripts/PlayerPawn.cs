@@ -15,6 +15,7 @@ public class PlayerPawn : Pawn
 
         if (gameMap.canMoveTo(nextPoint))
         {
+            gameMap.MovePawnTo(this, nextPoint);
             point.Set(nextPoint);
             return true;
         }

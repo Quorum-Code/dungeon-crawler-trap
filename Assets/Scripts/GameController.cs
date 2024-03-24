@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] GameObject floorPrefab;
-    [SerializeField] GameObject wallPrefab;
+    [SerializeField] MapConfig mapConfig;
 
     [SerializeField] PlayerController playerController;
     GameMap gm;
@@ -15,12 +14,7 @@ public class GameController : MonoBehaviour
     {
         Application.targetFrameRate = 120;
 
-        if (floorPrefab == null || wallPrefab == null) 
-        {
-            Debug.Log("no floorPrefab or wallPrefab");
-            Destroy(gameObject);
-        }
-        gm = new GameMap(floorPrefab, wallPrefab);
+        gm = new GameMap(mapConfig);
 
         if (playerController == null) 
         {

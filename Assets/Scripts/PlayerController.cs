@@ -11,14 +11,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionAsset inputAsset;
     private PlayerInput playerInput;
 
-    bool isMoving = false;
-    Mutex moving;
-
     int x = 0;
     int z = 0;
 
     IEnumerator animate;
-
     PlayerPawn playerPawn;
 
     [SerializeField] GameController gameController;
@@ -37,7 +33,6 @@ public class PlayerController : MonoBehaviour
         GameMap gm = gameController.GetGameMap();
         playerPawn = new PlayerPawn(gm.spawn.x, gm.spawn.z, gameObject, gm);
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
-
 
         if (inputAsset == null)
         {
@@ -81,8 +76,6 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                Debug.Log(context);
-                Debug.Log("set queueEvent?");
                 qe = ForwardEvent;
             }
         }
@@ -191,7 +184,6 @@ public class PlayerController : MonoBehaviour
         {
             qeContext = new InputAction.CallbackContext();
             qe(qeContext);
-
             qe = null;
         }
     }

@@ -3,40 +3,23 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-// Can store prefabs for GameMap to instance
-public class MapConfig 
-{
-
-}
-
 public class GameMap
 {
+    MapConfig config;
+
     int width;      // x
     int length;     // z
 
     Tile[,] map;    // x,z
 
-    GameObject floorPrefab;
-    GameObject wallPrefab;
-
     readonly public Point spawn;
 
-    public GameMap(GameObject floorPrefab, GameObject wallPrefab) 
+    public GameMap(MapConfig mapConfig) 
     {
+        config = mapConfig;
+
         width = 32;
         length = 32;
-
-        this.floorPrefab = floorPrefab;
-        this.wallPrefab = wallPrefab;
-
-        GameObject floor = GameObject.Instantiate(floorPrefab);
-        floor.transform.position = new Vector3(width / 2, 0, length / 2);
-        floor.transform.localScale = new Vector3(floor.transform.localScale.x * width + 1, floor.transform.localScale.y * 1f, floor.transform.localScale.x * length + 1);
-
-        //GameObject ceiling = GameObject.Instantiate(floorPrefab);
-        //ceiling.transform.position = new Vector3(width / 2, 1, length / 2);
-        //ceiling.transform.rotation = Quaternion.Euler(180, 0, 0);
-        //ceiling.transform.localScale = new Vector3(ceiling.transform.localScale.x * width + 1, ceiling.transform.localScale.y * 1f, ceiling.transform.localScale.x * length + 1);
 
         map = new Tile[width, length];
         for (int i = 0; i < width; i++) 
@@ -186,7 +169,12 @@ public class GameMap
         {
             if (!t.isPassable)
             {
-                g = GameObject.Instantiate(wallPrefab);
+                g = GameObject.Instantiate(config.wallPrefabs[0]);
+                g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
+            }
+            else 
+            {
+                g = GameObject.Instantiate(config.tilePrefabs[0]);
                 g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
             }
         }
@@ -198,25 +186,26 @@ public class GameMap
         // Instance edges
         for (int i = 0; i < width; i++)
         {
-            g = GameObject.Instantiate(wallPrefab);
+            g = GameObject.Instantiate(config.wallPrefabs[0]);
             g.transform.position = new Vector3(i, .5f, -1);
 
-            g = GameObject.Instantiate(wallPrefab);
+            g = GameObject.Instantiate(config.wallPrefabs[0]);
             g.transform.position = new Vector3(i, .5f, length);
         }
 
         for (int i = 0; i < length; i++)
         {
-            g = GameObject.Instantiate(wallPrefab);
+            g = GameObject.Instantiate(config.wallPrefabs[0]);
             g.transform.position = new Vector3(-1, .5f, i);
 
-            g = GameObject.Instantiate(wallPrefab);
+            g = GameObject.Instantiate(config.wallPrefabs[0]);
             g.transform.position = new Vector3(width, .5f, i);
         }
     }
 
     private class Tile
     {
+        public Trigger trigger;
         public bool isPassable { get; private set; } = false;
         readonly public Point point;
 
@@ -257,6 +246,25 @@ public class GameMap
         if (!inBounds(point) || !map[point.x, point.z].isPassable)
             return false;
         return true;
+    }
+
+    public void MovePawnTo(Pawn pawn, Point nextPoint)
+    {
+        if (inBounds(pawn.point)) 
+        {
+            if (map[pawn.point.x, pawn.point.z].trigger != null) 
+            {
+                map[pawn.point.x, pawn.point.z].trigger.Release();
+            }
+        }
+
+        if (inBounds(nextPoint)) 
+        {
+            if (map[nextPoint.x, nextPoint.z].trigger != null)
+            {
+                map[nextPoint.x, nextPoint.z].trigger.Activate();
+            }
+        }
     }
 }
 
