@@ -76,7 +76,7 @@
                     "name": "",
                     "id": "d8b8cc32-002d-4fe3-989d-99d3b435d684",
                     "path": "<Keyboard>/s",
-                    "interactions": "Press",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Backward",

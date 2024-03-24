@@ -73,58 +73,55 @@ public class PlayerController : MonoBehaviour
 
     private void ForwardEvent(InputAction.CallbackContext context) 
     {
-        if (context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Disabled)
         {
-            if (animate == null) 
+            if (animate == null)
             {
                 TryMove(0, 1);
             }
-            else 
+            else
             {
+                Debug.Log(context);
+                Debug.Log("set queueEvent?");
                 qe = ForwardEvent;
-                qeContext = context;
-                Debug.Log("At save: " + context);
             }
         }
     }
 
     private void RightEvent(InputAction.CallbackContext context) 
     {
-        if (context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Disabled)
         {
             if (animate == null)
                 TryMove(1, 0);
             else
             {
-                qe = ForwardEvent;
-                qeContext = context;
+                qe = RightEvent;
             }
         }
     }
     private void BackwardEvent(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Disabled)
         {
             if(animate == null)
                 TryMove(0, -1);
             else
             {
-                qe = ForwardEvent;
-                qeContext = context;
+                qe = BackwardEvent;
             }
         }
     }
 
     private void LeftEvent(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started || context.phase == InputActionPhase.Disabled)
         {
             if(animate == null)
                 TryMove(-1, 0);
             else
             {
-                qe = ForwardEvent;
-                qeContext = context;
+                qe = LeftEvent;
             }
         }
     }
@@ -135,8 +132,7 @@ public class PlayerController : MonoBehaviour
             TryTurn(true);
         else
         {
-            qe = ForwardEvent;
-            qeContext = context;
+            qe = TurnLeftEvent;
         }
     }
 
@@ -146,8 +142,7 @@ public class PlayerController : MonoBehaviour
             TryTurn(false);
         else
         {
-            qe = ForwardEvent;
-            qeContext = context;
+            qe = TurnRightEvent;
         }
     }
 
@@ -195,9 +190,9 @@ public class PlayerController : MonoBehaviour
         if (qe != null)
         {
             qeContext = new InputAction.CallbackContext();
-            Debug.Log("Made to loading...");
-            Debug.Log("At load: " + qeContext);
             qe(qeContext);
+
+            qe = null;
         }
     }
 
