@@ -1,5 +1,7 @@
 # Trip the Trap
+
 > Made for [Dungeon Crawler Gamejam 2024](https://itch.io/jam/dcjam2024).
+
 Trip the Trap is a game about uncovering the secrets of an ancient dungeon, specifically its traps.
 
 ## Credits
