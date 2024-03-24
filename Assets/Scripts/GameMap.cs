@@ -84,6 +84,15 @@ public class GameMap
             x = nx;
             z = nz;
             map.map[nx, nz].SetPassable(true);
+
+            float r = Random.Range(0f, 1f);
+            if (r < .1f) 
+            {
+                GameObject g = GameObject.Instantiate(map.config.triggerPrefabs[0]);
+                g.transform.position = new Vector3(x, 0.5f, z);
+                map.map[nx, nz].trigger = g.GetComponent<Trigger>();
+            }
+
             return true;
         }
 
@@ -138,7 +147,6 @@ public class GameMap
             foreach (Walker walker in walkers) 
             {
                 r = Random.Range(0f, 1f);
-
                 if (r < .15f)
                 {
                     Walker w = new Walker(walker);
@@ -175,6 +183,12 @@ public class GameMap
             else 
             {
                 g = GameObject.Instantiate(config.tilePrefabs[0]);
+                g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
+            }
+
+            if (t.trigger != null) 
+            {
+                g = GameObject.Instantiate(config.triggerPrefabs[0]);
                 g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
             }
         }
