@@ -6,8 +6,8 @@ Trip the Trap is a game about uncovering the secrets of an ancient dungeon, spec
 
 ## Credits
 ### External Assets
-- Bit Bonanza, by VEXED [here](https://v3x3d.itch.io/bit-bonanza).
-- Basic Pixel Health bar and Scroll bar, by Bdragon1727 [here](https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar).
-- Rogue Fantasy Catacombs, by "Szadi art" [here](https://szadiart.itch.io/rogue-fantasy-catacombs).
-- Monster & Giant Asset Pack, by DeepDiveGameStudio [here](https://deepdivegamestudio.itch.io/monstergiantassetpack).
-- Undead Asset Pack, by DeepDiveGameStudio [here](https://deepdivegamestudio.itch.io/undead-asset-pack).
+- [Bit Bonanza](https://v3x3d.itch.io/bit-bonanza), by VEXED.
+- [Basic Pixel Health bar and Scroll bar](https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar), by Bdragon1727.
+- [Rogue Fantasy Catacombs](https://szadiart.itch.io/rogue-fantasy-catacombs), by "Szadi art".
+- [Monster & Giant Asset Pack](https://deepdivegamestudio.itch.io/monstergiantassetpack), by DeepDiveGameStudio.
+- [Undead Asset Pack](https://deepdivegamestudio.itch.io/undead-asset-pack), by DeepDiveGameStudio.
