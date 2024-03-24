@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,6 +22,10 @@ public class PlayerController : MonoBehaviour
     PlayerPawn playerPawn;
 
     [SerializeField] GameController gameController;
+
+    delegate void QueuedEvent(InputAction.CallbackContext context);
+    QueuedEvent qe;
+    InputAction.CallbackContext qeContext;
 
     public void Ready() 
     {
@@ -70,7 +75,16 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            TryMove(0, 1);
+            if (animate == null) 
+            {
+                TryMove(0, 1);
+            }
+            else 
+            {
+                qe = ForwardEvent;
+                qeContext = context;
+                Debug.Log("At save: " + context);
+            }
         }
     }
 
@@ -78,14 +92,26 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            TryMove(1, 0);
+            if (animate == null)
+                TryMove(1, 0);
+            else
+            {
+                qe = ForwardEvent;
+                qeContext = context;
+            }
         }
     }
     private void BackwardEvent(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Started)
         {
-            TryMove(0, -1);
+            if(animate == null)
+                TryMove(0, -1);
+            else
+            {
+                qe = ForwardEvent;
+                qeContext = context;
+            }
         }
     }
 
@@ -93,23 +119,41 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            TryMove(-1, 0);
+            if(animate == null)
+                TryMove(-1, 0);
+            else
+            {
+                qe = ForwardEvent;
+                qeContext = context;
+            }
         }
     }
 
     private void TurnLeftEvent(InputAction.CallbackContext context)
     {
-        TryTurn(true);
+        if (animate == null)
+            TryTurn(true);
+        else
+        {
+            qe = ForwardEvent;
+            qeContext = context;
+        }
     }
 
     private void TurnRightEvent(InputAction.CallbackContext context)
     {   
-        TryTurn(false);
+        if (animate == null)
+            TryTurn(false);
+        else
+        {
+            qe = ForwardEvent;
+            qeContext = context;
+        }
     }
 
     private void TryMove(int dx, int dz) 
     {
-        if (animate == null) 
+        if (animate == null)
         {
             bool ok = playerPawn.Move(dx, dz);
             if (ok)
@@ -118,12 +162,11 @@ public class PlayerController : MonoBehaviour
                 animate = AnimateMove();
                 StartCoroutine(animate);
             }
-            else 
+            else
             {
                 // bump
                 animate = AnimateBump(dx, dz);
                 StartCoroutine(animate);
-                Debug.Log("bumping");
             }
         }
     }
@@ -145,6 +188,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void EndAnimate() 
+    {
+        animate = null;
+
+        if (qe != null)
+        {
+            qeContext = new InputAction.CallbackContext();
+            Debug.Log("Made to loading...");
+            Debug.Log("At load: " + qeContext);
+            qe(qeContext);
+        }
+    }
+
     private IEnumerator AnimateMove() 
     {
         Vector3 init = gameObject.transform.position;
@@ -159,7 +215,8 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         gameObject.transform.position = post;
-        animate = null;
+        
+        EndAnimate();
     }
 
     private IEnumerator AnimateBump(int dx, int dz) 
@@ -185,8 +242,9 @@ public class PlayerController : MonoBehaviour
             gameObject.transform.position = Vector3.Lerp(post, init, t / end);
             yield return null;
         }
-        gameObject.transform.position = init;
-        animate = null;
+        gameObject.transform.position = init; 
+        
+        EndAnimate();
     }
 
     private IEnumerator AnimateTurn(bool isLeftTurn)
@@ -203,6 +261,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         gameObject.transform.rotation = Quaternion.Euler(postRot);
-        animate = null;
+
+        EndAnimate();
     }
 }

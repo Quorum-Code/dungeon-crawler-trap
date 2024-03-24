@@ -140,6 +140,7 @@ public class GameMap
     private void RandomWalk() 
     {
         List<Walker> walkers = new List<Walker>();
+        map[width / 2, 0].SetPassable(true);
         walkers.Add(new Walker(width / 2, 0, 0, 1, this));
         walkers.Add(new Walker(width / 2, 1, 1, 0, this));
         walkers.Add(new Walker(width / 2, 1, -1, 0, this));
