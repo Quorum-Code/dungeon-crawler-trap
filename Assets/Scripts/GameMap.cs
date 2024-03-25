@@ -13,6 +13,7 @@ public class GameMap
     Tile[,] map;    // x,z
 
     readonly public Point spawn;
+    public List<EnemyPawn> enemies;
 
     public GameMap(MapConfig mapConfig) 
     {
@@ -34,6 +35,8 @@ public class GameMap
         RandomWalk();
         InstanceMap();
         InstaceEdges();
+
+        // Add enemy
     }
 
     private class Walker 

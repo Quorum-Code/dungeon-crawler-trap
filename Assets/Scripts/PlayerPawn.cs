@@ -19,7 +19,15 @@ public class PlayerPawn : Pawn
             point.Set(nextPoint);
             return true;
         }
-        else 
+        else if (gameMap.inBounds(nextPoint) && gameMap.GetPawnAtPoint(nextPoint) != null) 
+        {
+            Pawn enemyPawn = gameMap.GetPawnAtPoint(nextPoint);
+            Point pushPoint = MovePoint(dx * 2, dz * 2);
+            enemyPawn.Move(pushPoint.x, pushPoint.z);
+            Debug.Log("Shoved enemy!");
+            return false;
+        }
+        else
         {
             return false;
         }

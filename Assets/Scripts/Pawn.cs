@@ -22,9 +22,16 @@ public class Pawn
         this.gameMap = gameMap;
     }
 
+    public virtual bool Move(int x, int z) 
+    {
+        return false;
+    }
+
     public void Damage(int d) 
     {
-
+        // TODO: override with events for player/enemy pawns
+        health -= d;
+        Debug.Log("new health: " + health);
     }
 
     protected enum Direction 

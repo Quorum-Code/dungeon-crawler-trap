@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 100;
 
         gm = new GameMap(mapConfig);
 
@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
             Debug.LogError("no playerController");
             Destroy(gameObject);
         }
+
         playerController.Ready();
     }
 
