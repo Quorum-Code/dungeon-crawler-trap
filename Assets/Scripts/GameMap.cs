@@ -38,6 +38,7 @@ public class GameMap
 
         // Add enemy
         AddEnemy(new Point(7, 7), config.enemyPrefabs[0]);
+        AddEnemy(new Point(8, 7), config.enemyPrefabs[0]);
     }
 
     public void AddEnemy(Point point, GameObject enemyPrefab) 
