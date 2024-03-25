@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class Trigger : MonoBehaviour
 {
+    public GameMap gameMap;
+    public List<Trap> traps = new List<Trap>();
+    public Point point;
+
     public void Activate() 
     {
         Debug.Log("trigger activated!!!");
+        foreach (Trap trap in traps) 
+        {
+            trap.Activate();
+        }
     }
 
-    public void Release() 
+    public void Release()
     {
         Debug.Log("trigger released!!!");
+        foreach (Trap trap in traps)
+        {
+            trap.Deactivate();
+        }
     }
 }

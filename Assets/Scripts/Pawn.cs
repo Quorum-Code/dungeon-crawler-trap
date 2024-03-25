@@ -4,7 +4,7 @@ public class Pawn
 {
     public readonly Point point;
 
-    protected float health;
+    protected int health = 5;
 
     protected int Str = 0;
     protected int Dex = 0;
@@ -20,6 +20,11 @@ public class Pawn
         point = new Point(x, z);
         this.gameObject = gameObject;
         this.gameMap = gameMap;
+    }
+
+    public void Damage(int d) 
+    {
+
     }
 
     protected enum Direction 

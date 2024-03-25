@@ -89,8 +89,24 @@ public class GameMap
             if (r < .1f) 
             {
                 GameObject g = GameObject.Instantiate(map.config.triggerPrefabs[0]);
+                g.transform.SetParent(map.config.mapParent.transform);
                 g.transform.position = new Vector3(x, 0.5f, z);
-                map.map[nx, nz].trigger = g.GetComponent<Trigger>();
+                Trigger trig = g.GetComponent<Trigger>();
+                map.map[nx, nz].trigger = trig;
+
+                g = GameObject.Instantiate(map.config.trapPrefabs[0]);
+                g.transform.SetParent(map.config.mapParent.transform);
+                g.transform.position = new Vector3(x, 0.5f, z);
+                Trap trap = g.GetComponent<Trap>();
+
+                trap.point = new Point(x, z);
+                trig.point = new Point(x, z);
+
+                trap.gameMap = map;
+                trig.gameMap = map;
+
+                trap.triggers.Add(trig);
+                trig.traps.Add(trap);
             }
 
             return true;
@@ -178,17 +194,20 @@ public class GameMap
             if (!t.isPassable)
             {
                 g = GameObject.Instantiate(config.wallPrefabs[0]);
+                g.transform.SetParent(config.mapParent.transform);
                 g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
             }
             else 
             {
                 g = GameObject.Instantiate(config.tilePrefabs[0]);
+                g.transform.SetParent(config.mapParent.transform);
                 g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
             }
 
             if (t.trigger != null) 
             {
                 g = GameObject.Instantiate(config.triggerPrefabs[0]);
+                g.transform.SetParent(config.mapParent.transform);
                 g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
             }
         }
@@ -201,24 +220,29 @@ public class GameMap
         for (int i = 0; i < width; i++)
         {
             g = GameObject.Instantiate(config.wallPrefabs[0]);
+            g.transform.SetParent(config.mapParent.transform);
             g.transform.position = new Vector3(i, .5f, -1);
 
             g = GameObject.Instantiate(config.wallPrefabs[0]);
+            g.transform.SetParent(config.mapParent.transform);
             g.transform.position = new Vector3(i, .5f, length);
         }
 
         for (int i = 0; i < length; i++)
         {
             g = GameObject.Instantiate(config.wallPrefabs[0]);
+            g.transform.SetParent(config.mapParent.transform);
             g.transform.position = new Vector3(-1, .5f, i);
 
             g = GameObject.Instantiate(config.wallPrefabs[0]);
+            g.transform.SetParent(config.mapParent.transform);
             g.transform.position = new Vector3(width, .5f, i);
         }
     }
 
     private class Tile
     {
+        public Pawn pawn = null;
         public Trigger trigger;
         public bool isPassable { get; private set; } = false;
         readonly public Point point;
@@ -269,6 +293,7 @@ public class GameMap
             if (map[pawn.point.x, pawn.point.z].trigger != null) 
             {
                 map[pawn.point.x, pawn.point.z].trigger.Release();
+                map[pawn.point.x, pawn.point.z].pawn = null;
             }
         }
 
@@ -276,9 +301,17 @@ public class GameMap
         {
             if (map[nextPoint.x, nextPoint.z].trigger != null)
             {
+                map[nextPoint.x, nextPoint.z].pawn = pawn;
                 map[nextPoint.x, nextPoint.z].trigger.Activate();
             }
         }
+    }
+
+    public Pawn GetPawnAtPoint(Point point) 
+    {
+        if (!inBounds(point))
+            return null;
+        return map[point.x, point.z].pawn;
     }
 }
 
