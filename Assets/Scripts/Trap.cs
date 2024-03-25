@@ -7,6 +7,7 @@ public class Trap : MonoBehaviour
     public List<Trigger> triggers = new List<Trigger>();
     public GameMap gameMap;
     public Point point;
+    [SerializeField] private Animator animator;
 
     public void Activate() 
     {
@@ -24,6 +25,11 @@ public class Trap : MonoBehaviour
             {
                 Debug.Log("no pawn at point");
             }
+        }
+
+        if (animator != null) 
+        {
+            animator.Play("SpikeActivation");
         }
     }
 
