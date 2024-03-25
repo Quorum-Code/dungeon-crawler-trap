@@ -7,6 +7,8 @@ public class EnemyController : MonoBehaviour
 {
     public EnemyPawn enemyPawn;
     IEnumerator animate;
+    [SerializeField] Animation deathAnimation;
+    [SerializeField] Animator animator;
 
     public void PawnMoved() 
     {
@@ -35,5 +37,6 @@ public class EnemyController : MonoBehaviour
             yield return null;
         }
         transform.position = post;
+        enemyPawn.FinishMove();
     }
 }
