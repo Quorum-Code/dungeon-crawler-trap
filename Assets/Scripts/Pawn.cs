@@ -4,7 +4,7 @@ public class Pawn
 {
     public readonly Point point;
 
-    public int health { get; private set; } = 5;
+    public int health { get; protected set; } = 5;
 
     protected int Str = 0;
     protected int Dex = 0;

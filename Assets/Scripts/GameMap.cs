@@ -342,6 +342,15 @@ public class GameMap
         }
     }
 
+    public void RemovePawnAtPoint(Point point) 
+    {
+        Tile t = GetTileAtPoint(point);
+        if (t != null) 
+        {
+            t.pawn = null;
+        }
+    }
+
     public Pawn GetPawnAtPoint(Point point) 
     {
         if (!inBounds(point))

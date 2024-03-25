@@ -38,5 +38,17 @@ public class EnemyController : MonoBehaviour
         }
         transform.position = post;
         enemyPawn.FinishMove();
+
+        if (enemyPawn.health <= 0) 
+        {
+            // play death anim
+            animator.Play("SlimeDeath");
+        }
+    }
+
+    public void Death() 
+    {
+        enemyPawn.Death();
+        Destroy(gameObject);
     }
 }

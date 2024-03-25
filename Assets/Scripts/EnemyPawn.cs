@@ -16,6 +16,8 @@ public class EnemyPawn : Pawn
             ec.enemyPawn = this;
             pm = ec.PawnMoved;
         }
+
+        health = 1;
     }
 
     public override bool Move(int x, int z) 
@@ -35,5 +37,10 @@ public class EnemyPawn : Pawn
     public void FinishMove() 
     {
         gameMap.FinishMove(point);
+    }
+
+    public void Death() 
+    {
+        gameMap.RemovePawnAtPoint(point);
     }
 }
