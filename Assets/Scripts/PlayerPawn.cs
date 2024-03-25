@@ -24,7 +24,7 @@ public class PlayerPawn : Pawn
             Pawn enemyPawn = gameMap.GetPawnAtPoint(nextPoint);
             Point pushPoint = MovePoint(dx * 2, dz * 2);
             enemyPawn.Move(pushPoint.x, pushPoint.z);
-            Debug.Log("Shoved enemy!");
+            Debug.Log("Shoved enemy! to: " + pushPoint.x + " " + pushPoint.z);
             return false;
         }
         else

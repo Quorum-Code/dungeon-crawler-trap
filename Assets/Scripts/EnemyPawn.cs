@@ -4,18 +4,29 @@ using UnityEngine;
 
 public class EnemyPawn : Pawn
 {
+    public delegate void PawnMoved();
+    PawnMoved pm;
+    IEnumerator animate;
+
     public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap) 
     {
-
+        EnemyController ec = gameObject.GetComponent<EnemyController>();
+        if (ec != null ) 
+        {
+            ec.enemyPawn = this;
+            pm = ec.PawnMoved;
+        }
     }
 
-    public override bool Move(int dx, int dz) 
+    public override bool Move(int x, int z) 
     {
-        Point nextPoint = new Point(point.x + dx, point.z + dz);
+        Point nextPoint = new Point(x, z);
         if (gameMap.canMoveTo(nextPoint)) 
         {
             gameMap.MovePawnTo(this, nextPoint);
             point.Set(nextPoint);
+
+            pm();
             return true;
         }
         return false;

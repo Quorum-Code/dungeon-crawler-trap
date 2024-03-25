@@ -37,6 +37,33 @@ public class GameMap
         InstaceEdges();
 
         // Add enemy
+        AddEnemy(new Point(7, 7), config.enemyPrefabs[0]);
+    }
+
+    public void AddEnemy(Point point, GameObject enemyPrefab) 
+    {
+        Tile t = GetTileAtPoint(point);
+        if (t != null && t.pawn == null) 
+        {
+            GameObject g = GameObject.Instantiate(enemyPrefab);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
+            g.transform.SetParent(config.mapParent.transform);
+
+            EnemyPawn enemyPawn = new EnemyPawn(point.x, point.z, g, this);
+            t.pawn = enemyPawn;
+        }
+    }
+
+    private Tile GetTileAtPoint(Point point) 
+    {
+        if (!inBounds(point))
+        {
+            return null;
+        }
+        else 
+        {
+            return map[point.x, point.z];
+        }
     }
 
     private class Walker 
@@ -284,7 +311,7 @@ public class GameMap
 
     public bool canMoveTo(Point point) 
     {
-        if (!inBounds(point) || !map[point.x, point.z].isPassable)
+        if (!inBounds(point) || !map[point.x, point.z].isPassable || map[point.x, point.z].pawn != null)
             return false;
         return true;
     }
@@ -296,15 +323,15 @@ public class GameMap
             if (map[pawn.point.x, pawn.point.z].trigger != null) 
             {
                 map[pawn.point.x, pawn.point.z].trigger.Release();
-                map[pawn.point.x, pawn.point.z].pawn = null;
             }
+            map[pawn.point.x, pawn.point.z].pawn = null;
         }
 
         if (inBounds(nextPoint)) 
         {
+            map[nextPoint.x, nextPoint.z].pawn = pawn;
             if (map[nextPoint.x, nextPoint.z].trigger != null)
             {
-                map[nextPoint.x, nextPoint.z].pawn = pawn;
                 map[nextPoint.x, nextPoint.z].trigger.Activate();
             }
         }

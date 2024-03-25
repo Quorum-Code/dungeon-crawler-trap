@@ -10,4 +10,5 @@ public class MapConfig : MonoBehaviour
     public GameObject[] wallPrefabs;
     public GameObject[] triggerPrefabs;
     public GameObject[] trapPrefabs;
+    public GameObject[] enemyPrefabs;
 }
