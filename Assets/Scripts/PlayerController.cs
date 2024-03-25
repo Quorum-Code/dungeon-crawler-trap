@@ -202,7 +202,8 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         gameObject.transform.position = post;
-        
+
+        playerPawn.FinishMove();
         EndAnimate();
     }
 

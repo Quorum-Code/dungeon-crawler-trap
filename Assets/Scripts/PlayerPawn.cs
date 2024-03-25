@@ -73,6 +73,11 @@ public class PlayerPawn : Pawn
         }
     }
 
+    public void FinishMove() 
+    {
+        gameMap.FinishMove(point);
+    }
+
     public void TurnLeft()
     {
         switch(facing)

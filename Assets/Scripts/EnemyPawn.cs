@@ -31,4 +31,9 @@ public class EnemyPawn : Pawn
         }
         return false;
     }
+
+    public void FinishMove() 
+    {
+        gameMap.FinishMove(point);
+    }
 }

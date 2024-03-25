@@ -54,6 +54,15 @@ public class GameMap
         }
     }
 
+    public void FinishMove(Point point) 
+    {
+        Tile t = GetTileAtPoint(point);
+        if (t != null && t.trigger) 
+        {
+            t.trigger.Activate();
+        }
+    }
+
     private Tile GetTileAtPoint(Point point) 
     {
         if (!inBounds(point))
@@ -330,10 +339,6 @@ public class GameMap
         if (inBounds(nextPoint)) 
         {
             map[nextPoint.x, nextPoint.z].pawn = pawn;
-            if (map[nextPoint.x, nextPoint.z].trigger != null)
-            {
-                map[nextPoint.x, nextPoint.z].trigger.Activate();
-            }
         }
     }
 
