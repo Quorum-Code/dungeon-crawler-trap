@@ -5,7 +5,7 @@ using UnityEngine;
 public class Trigger : MonoBehaviour
 {
     public GameMap gameMap;
-    public List<Trap> traps = new List<Trap>();
+    private List<Trap> traps = new List<Trap>();
     public Point point;
 
     public void Activate() 
@@ -24,5 +24,10 @@ public class Trigger : MonoBehaviour
         {
             trap.Deactivate();
         }
+    }
+
+    public void AddTraps(List<Trap> newTraps) 
+    {
+        traps.AddRange(newTraps);
     }
 }

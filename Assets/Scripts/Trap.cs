@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
-    public List<Trigger> triggers = new List<Trigger>();
+    private List<Trigger> triggers = new List<Trigger>();
     public GameMap gameMap;
     public Point point;
     [SerializeField] private Animator animator;
@@ -21,10 +21,6 @@ public class Trap : MonoBehaviour
                 Debug.Log("damaged done to a pawn");
                 p.Damage(1);
             }
-            else 
-            {
-                Debug.Log("no pawn at point");
-            }
         }
 
         if (animator != null) 
@@ -35,6 +31,11 @@ public class Trap : MonoBehaviour
 
     public void Deactivate() 
     {
-        Debug.Log("trap deactivated!");
+
+    }
+
+    public void AddTriggers(List<Trigger> newTriggers) 
+    {
+        triggers.AddRange(newTriggers);
     }
 }

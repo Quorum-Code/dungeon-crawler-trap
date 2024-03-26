@@ -1,15 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerPawn : Pawn
 {
+    public int xp;
+
+    public delegate void UpdateUI();
+
+    public UpdateUI updateHealth;
+    public UpdateUI updateXp;
+
     public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap)
     {
         
     }
 
-    public bool Move(int dx, int dz) 
+    public override bool Move(int dx, int dz) 
     {
         Point nextPoint = MovePoint(dx, dz);
 
@@ -31,6 +39,13 @@ public class PlayerPawn : Pawn
         {
             return false;
         }
+    }
+
+    public override void Damage(int d)
+    {
+        Debug.Log("damaged?");
+        base.Damage(d);
+        updateHealth();
     }
 
     private Point MovePoint(int dx, int dz) 
@@ -114,5 +129,10 @@ public class PlayerPawn : Pawn
                 facing = Direction.North;
                 break;
         }
+    }
+
+    public void SetUpdateHealth(UpdateUI u) 
+    {
+
     }
 }

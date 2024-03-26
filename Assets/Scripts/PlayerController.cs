@@ -8,11 +8,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private GameUIController guic;
     [SerializeField] private InputActionAsset inputAsset;
     private PlayerInput playerInput;
-
-    int x = 0;
-    int z = 0;
 
     IEnumerator animate;
     PlayerPawn playerPawn;
@@ -34,6 +32,11 @@ public class PlayerController : MonoBehaviour
         playerPawn = new PlayerPawn(gm.spawn.x, gm.spawn.z, gameObject, gm);
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
 
+        // UI events
+        guic.Init(3, 2, 0);
+        playerPawn.updateHealth = HealthChange;
+        playerPawn.updateXp = XpChange;
+
         if (inputAsset == null)
         {
             Debug.LogError("no inputAsset on " + gameObject.name);
@@ -44,8 +47,31 @@ public class PlayerController : MonoBehaviour
             ConnectInputEvents();
         }
 
+        
+
         playerInput = GetComponent<PlayerInput>();
         animate = null;
+    }
+
+    private void TestDebug() 
+    {
+        Debug.Log("Event called!");
+    }
+
+
+    private void MaxHealthChange() 
+    {
+        guic.SetMaxHealth(playerPawn.health);
+    }
+
+    private void HealthChange() 
+    {
+        guic.SetHealth(playerPawn.health);
+    }
+
+    private void XpChange() 
+    {
+        guic.SetHealth(playerPawn.xp);
     }
 
     private void ConnectInputEvents() 

@@ -24,6 +24,12 @@ public class MapConfig : MonoBehaviour
         d.AddLine("X S X");
         d.AddLine("XXXXX");
 
+        d.triggerPrefab = triggerPrefabs[0];
+        d.trapPrefab = trapPrefabs[0];
+        d.trapNetwork = new DungeonLayout.TrapNetwork();
+        d.trapNetwork.traps.Add(new Point(2, 3));
+        d.trapNetwork.triggers.Add(new Point(2, 3));
+
         return d;
     }
 
@@ -33,6 +39,9 @@ public class MapConfig : MonoBehaviour
 
         public GameObject tilePrefab;
         public GameObject wallPrefab;
+        public GameObject triggerPrefab;
+        public GameObject trapPrefab;
+        public TrapNetwork trapNetwork;
 
         public int width = -1;
         public int length = -1;
@@ -84,9 +93,15 @@ public class MapConfig : MonoBehaviour
             }
         }
 
-        protected class TrapNetwork 
+        public class TrapNetwork 
         {
+            public List<Point> traps = new List<Point>();
+            public List<Point> triggers = new List<Point>();
 
+            public TrapNetwork() 
+            {
+
+            }
         }
     }
 }

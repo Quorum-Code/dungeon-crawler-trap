@@ -4,7 +4,8 @@ public class Pawn
 {
     public readonly Point point;
 
-    public int health { get; protected set; } = 5;
+    public int maxHealth { get; protected set; } = 3;
+    public int health { get; protected set; } = 3;
 
     protected int Str = 0;
     protected int Dex = 0;
@@ -27,11 +28,16 @@ public class Pawn
         return false;
     }
 
-    public void Damage(int d) 
+    public virtual void Damage(int d) 
     {
         // TODO: override with events for player/enemy pawns
         health -= d;
         Debug.Log("new health: " + health);
+    }
+
+    public virtual void AddXp(int xp) 
+    {
+
     }
 
     protected enum Direction 

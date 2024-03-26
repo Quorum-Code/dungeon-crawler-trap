@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -83,6 +84,47 @@ public class GameMap
                 }
             }
         }
+
+        List<Trap> traps = new List<Trap>();
+        List<Trigger> triggers = new List<Trigger>();
+        foreach (Point point in dl.trapNetwork.traps) 
+        {
+            g = GameObject.Instantiate(dl.trapPrefab);
+            g.transform.SetParent(config.mapParent.transform);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
+            Trap t = g.GetComponent<Trap>();
+            if (t != null) 
+            {
+                traps.Add(t);
+                t.gameMap = this;
+                t.point = point;
+            }
+        }
+
+        foreach (Point point in dl.trapNetwork.triggers)
+        {
+            g = GameObject.Instantiate(dl.triggerPrefab);
+            g.transform.SetParent(config.mapParent.transform);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
+            Trigger t = g.GetComponent<Trigger>();
+            if (t != null)
+            {
+                t.point = point;
+                triggers.Add(t);
+                t.gameMap = this;
+                t.AddTraps(traps);
+                Tile tile = GetTileAtPoint(point);
+                if (tile != null)
+                {
+                    tile.trigger = t;
+                }
+            }
+        }
+
+        foreach (Trap t in traps) 
+        {
+            t.AddTriggers(triggers);
+        }
     }
 
     private void PopulateMap() 
@@ -164,6 +206,7 @@ public class GameMap
             this.map = walker.map;
         }
 
+        [Obsolete("Random dungeon generation no longer s")]
         public bool Walk() 
         {
             steps++;
@@ -186,7 +229,7 @@ public class GameMap
             z = nz;
             map.map[nx, nz].SetPassable(true);
 
-            float r = Random.Range(0f, 1f);
+            float r = UnityEngine.Random.Range(0f, 1f);
             if (r < .1f) 
             {
                 GameObject g = GameObject.Instantiate(map.config.triggerPrefabs[0]);
@@ -206,8 +249,8 @@ public class GameMap
                 trap.gameMap = map;
                 trig.gameMap = map;
 
-                trap.triggers.Add(trig);
-                trig.traps.Add(trap);
+                //trap.triggers.Add(trig);
+                //trig.traps.Add(trap);
             }
 
             return true;
@@ -215,7 +258,7 @@ public class GameMap
 
         public void Turn() 
         {
-            float r = Random.Range(0f, 1f);
+            float r = UnityEngine.Random.Range(0f, 1f);
 
             if (r < .5f)
             {
@@ -263,7 +306,7 @@ public class GameMap
             float r = 0f;
             foreach (Walker walker in walkers) 
             {
-                r = Random.Range(0f, 1f);
+                r = UnityEngine.Random.Range(0f, 1f);
                 if (r < .15f)
                 {
                     Walker w = new Walker(walker);
@@ -377,6 +420,8 @@ public class GameMap
 
     public bool inBounds(Point point) 
     {
+        if (point == null)
+            return false;
         return inBounds(point.x, point.y, point.z);
     }
 
