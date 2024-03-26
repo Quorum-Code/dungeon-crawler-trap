@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static MapConfig;
 
 public class GameMap
 {
@@ -12,7 +13,7 @@ public class GameMap
 
     Tile[,] map;    // x,z
 
-    readonly public Point spawn;
+    public Point spawn;
     public List<EnemyPawn> enemies;
 
     public GameMap(MapConfig mapConfig) 
@@ -32,13 +33,73 @@ public class GameMap
         }
 
         spawn = new Point(width/2, 0);
-        RandomWalk();
-        InstanceMap();
-        InstaceEdges();
+        //RandomWalk();
+        //InstanceMap();
+        //InstaceEdges();
 
-        // Add enemy
-        AddEnemy(new Point(7, 7), config.enemyPrefabs[0]);
-        AddEnemy(new Point(8, 7), config.enemyPrefabs[0]);
+        //Add enemy
+        //AddEnemy(new Point(7, 7), config.enemyPrefabs[0]);
+        //AddEnemy(new Point(8, 7), config.enemyPrefabs[0]);
+
+        DungeonLayout dl = config.Dungeon0();
+
+        InstanceDungeon(dl);
+    }
+
+    private void InstanceDungeon(DungeonLayout dl) 
+    {
+        ClearDungeon();
+
+        width = dl.GetWidth();
+        length = dl.GetLength();
+
+        PopulateMap();
+
+        GameObject g;
+        for (int j = 0; j < dl.layout.Count; j++) 
+        {
+            char[] s = dl.layout[j].ToCharArray();
+            for (int i = 0; i < s.Length; i++) 
+            {
+                // Open tile
+                if (s[i] == ' ' || s[i] == 'S')
+                {
+                    g = GameObject.Instantiate(dl.tilePrefab);
+                    map[i, j].SetPassable(true);
+                }
+                // Wall tile
+                else 
+                {
+                    g = GameObject.Instantiate(dl.wallPrefab);
+                    map[i, j].SetPassable(false);
+                }
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(i, .5f, j);
+
+                // Set spawn point
+                if (s[i] == 'S')
+                {
+                    spawn = new Point(i, j);
+                }
+            }
+        }
+    }
+
+    private void PopulateMap() 
+    {
+        map = new Tile[width, length];
+        for (int i = 0; i < width; i++) 
+        {
+            for (int j = 0; j < length; j ++) 
+            {
+                map[i, j] = new Tile(new Point(i, j));
+            }
+        }
+    }
+
+    private void ClearDungeon() 
+    {
+
     }
 
     public void AddEnemy(Point point, GameObject enemyPrefab) 

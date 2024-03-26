@@ -1073,6 +1073,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerObject
       objectReference: {fileID: 0}
+    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.8820755
+      objectReference: {fileID: 0}
+    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.9435702
+      objectReference: {fileID: 0}
+    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6647570548171618242, guid: 8c943328f281de34c9c6187118e1e65b,
         type: 3}
       propertyPath: gameController
