@@ -30,8 +30,8 @@ public class MapConfig : MonoBehaviour
         d.triggerPrefab = triggerPrefabs[0];
         d.trapPrefab = trapPrefabs[0];
         d.trapNetwork = new DungeonLayout.TrapNetwork();
-        d.trapNetwork.traps.Add(new Point(2, 3));
-        d.trapNetwork.triggers.Add(new Point(2, 3));
+        d.trapNetwork.traps.Add(new Point(1, 4));
+        d.trapNetwork.triggers.Add(new Point(1, 4));
 
         d.AddEnemy(new Point(2, 4), enemyPrefabs[0]);
 
@@ -51,7 +51,7 @@ public class MapConfig : MonoBehaviour
         public int width = -1;
         public int length = -1;
 
-        List<(Point, GameObject)> enemies = new List<(Point, GameObject)>();
+        public List<(Point, GameObject)> enemies = new List<(Point, GameObject)>();
 
         // Layout keys
         // ---------------

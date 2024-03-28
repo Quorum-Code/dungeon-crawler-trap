@@ -120,15 +120,21 @@ public class GameMap
 
         foreach ((Point, GameObject) e in dl.enemies) 
         {
-            if (!inBounds(e.Item1))
+            Point point = e.Item1;
+
+            if (!inBounds(point))
                 continue;
 
             g = GameObject.Instantiate(e.Item2);
+            g.transform.SetParent(config.mapParent.transform);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
             EnemyController ec = g.GetComponent<EnemyController>();
             if (ec != null) 
             {
-                Tile t = GetTileAtPoint(e.Item1);
+                Tile t = GetTileAtPoint(point);
+                ec.Ready(point, this);
                 t.pawn = ec.enemyPawn;
+                Debug.Log("enemyController found");
             }
         }
     }
@@ -152,9 +158,6 @@ public class GameMap
 
     public void NotifyEnemies(Point point)
     {
-        Debug.Log("notifying!");
-        Debug.Log("Target point: " + point.x + " " + point.z);
-
         int range = 5;
 
         // THIS IS A DUMB(ish) APPROACH BUT IM LAZY RN
@@ -170,7 +173,7 @@ public class GameMap
             {
                 if (isVisibleTo(point, new Point(i, j))) 
                 {
-                    Debug.Log("is visible");
+
                 }
             }
         }
@@ -183,9 +186,7 @@ public class GameMap
         while (!a.isEqual(b)) 
         {
             // get next point
-            Debug.Log("Before: " + b.x + "," + b.z);
             b = nextVisiblePoint(a, b);
-            Debug.Log("After: " + b.x + "," + b.z);
 
             // if next point in map is not passable return false
             if (!inBounds(b) || GetTileAtPoint(b).isPassable) 

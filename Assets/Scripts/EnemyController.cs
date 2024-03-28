@@ -10,6 +10,11 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Animation deathAnimation;
     [SerializeField] Animator animator;
 
+    public void Ready(Point point, GameMap gameMap) 
+    {
+        enemyPawn = new EnemyPawn(point.x, point.z, gameObject, gameMap);
+    }
+
     public void PawnMoved() 
     {
         MovePawn();
