@@ -11,24 +11,72 @@ public class PlayerPawn : Pawn
 
     public UpdateUI updateHealth;
     public UpdateUI updateXp;
+    public UpdateUI updateStamina;
+
+    public int maxStamina { get; private set; } = 3;
+    public int curStamina { get; private set; } = 0;
+    public float toNextStamina { get; private set; } = 0f;
+    public float regenStaminaTime { get; private set; } = 0.75f;
 
     public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap)
     {
         
     }
 
+    public void IncStaminaTime(float time) 
+    {
+        toNextStamina += time;
+
+        if (toNextStamina > regenStaminaTime) 
+        {
+            toNextStamina %= regenStaminaTime;
+            if (curStamina + 1 <= maxStamina) 
+            {
+                curStamina++;
+                updateStamina();
+            }
+        }
+    }
+
+    private bool hasStamina() 
+    {
+        if (curStamina > 0)
+            return true;
+        return false;
+    }
+
+    private void ConsumeStamina() 
+    {
+        if (curStamina == maxStamina)
+        {
+            curStamina--;
+            toNextStamina = 0f;
+        }
+        else 
+        {
+            curStamina--;
+        }
+        updateStamina();
+    }
+
     public override bool Move(int dx, int dz) 
     {
         Point nextPoint = MovePoint(dx, dz);
 
-        if (gameMap.canMoveTo(nextPoint))
+        if (!hasStamina()) 
         {
+            return false;
+        }
+        else if (gameMap.canMoveTo(nextPoint))
+        {
+            ConsumeStamina();
             gameMap.MovePawnTo(this, nextPoint);
             point.Set(nextPoint);
             return true;
         }
         else if (gameMap.inBounds(nextPoint) && gameMap.GetPawnAtPoint(nextPoint) != null) 
         {
+            ConsumeStamina();
             Pawn enemyPawn = gameMap.GetPawnAtPoint(nextPoint);
             Point pushPoint = MovePoint(dx * 2, dz * 2);
             enemyPawn.Move(pushPoint.x, pushPoint.z);

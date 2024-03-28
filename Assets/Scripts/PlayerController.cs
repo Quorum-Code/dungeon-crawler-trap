@@ -34,9 +34,10 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
 
         // UI events
-        guic.Init(3, 2, 0);
+        guic.Init(playerPawn);
         playerPawn.updateHealth = HealthChange;
         playerPawn.updateXp = XpChange;
+        playerPawn.updateStamina = StaminaChange;
 
         if (inputAsset == null)
         {
@@ -52,11 +53,25 @@ public class PlayerController : MonoBehaviour
         animate = null;
     }
 
+    private void Update()
+    {
+        playerPawn.IncStaminaTime(Time.deltaTime);
+    }
+
+    private void FixedUpdate()
+    {
+        guic.UpdateStaminaProgress(playerPawn);
+    }
+
     private void TestDebug() 
     {
         Debug.Log("Event called!");
     }
 
+    private void StaminaChange() 
+    {
+        guic.SetStamina(playerPawn);
+    }
 
     private void MaxHealthChange() 
     {

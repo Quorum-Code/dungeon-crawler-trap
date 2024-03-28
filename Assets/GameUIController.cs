@@ -10,6 +10,13 @@ public class GameUIController : MonoBehaviour
 
     [SerializeField] GameObject heartPrefab;
 
+    [SerializeField] GameObject staminaParent;
+    [SerializeField] GameObject staminaPrefab;
+    [SerializeField] GameObject staminaProgress;
+    [SerializeField] Color filledColor;
+    Image staminaImage;
+    Transform nextStaminaTransform;
+
     [SerializeField] Sprite fullHeart;
     [SerializeField] Sprite emptyHeart;
     [SerializeField] Sprite[] xpBar;
@@ -17,12 +24,16 @@ public class GameUIController : MonoBehaviour
     int maxHealth = 0;
     int curHealth = 0;
     List<GameObject> hearts = new List<GameObject>();
+    List<GameObject> stams = new List<GameObject>();
 
-    public void Init(int maxHealth, int health, int xp) 
+    public void Init(PlayerPawn playerPawn) 
     {
-        SetMaxHealth(maxHealth);
-        SetHealth(health);
-        SetXp(xp);
+        SetMaxHealth(playerPawn.maxHealth);
+        SetHealth(playerPawn.health);
+        SetXp(playerPawn.xp);
+
+        staminaImage = staminaProgress.GetComponent<Image>();
+        SetStamina(playerPawn);
     }
 
     public void SetMaxHealth(int max) 
@@ -78,5 +89,61 @@ public class GameUIController : MonoBehaviour
     public void SetXp(int xp) 
     {
         xpImage.sprite = xpBar[xp];
+    }
+
+    public void UpdateStaminaProgress(PlayerPawn playerPawn) 
+    {
+        // Check if curStamina < maxStam
+        if (playerPawn.curStamina < playerPawn.maxStamina)
+        {
+            // then check if need to enable image
+            if (!staminaImage.enabled)
+            {
+                staminaImage.enabled = true;
+            }
+
+            // set progress
+            staminaImage.fillAmount = playerPawn.toNextStamina / playerPawn.regenStaminaTime;
+
+            if (playerPawn.curStamina < stams.Count)
+            {
+                staminaProgress.transform.position = stams[playerPawn.curStamina].transform.position;
+            }
+        }
+        else 
+        {
+            if (staminaImage.enabled)
+                staminaImage.enabled = false;
+        }
+    }
+
+    public void SetStamina(PlayerPawn playerPawn) 
+    {
+        // add more stamina dots
+        GameObject g;
+        while (stams.Count < playerPawn.maxStamina) 
+        {
+            g = Instantiate(staminaPrefab);
+            g.transform.SetParent(staminaParent.transform);
+            stams.Add(g);
+        }
+
+        // color/arrange accordingly
+        for (int i = 0; i < stams.Count; i++) 
+        {
+            Image img = stams[i].GetComponent<Image>();
+            if (i < playerPawn.curStamina)
+            {
+                stams[i].transform.SetSiblingIndex(i);
+                if (img != null)
+                {
+                    img.color = filledColor;
+                }
+            }
+            else if(img != null) 
+            {
+                img.color = Color.white;
+            }
+        }
     }
 }
