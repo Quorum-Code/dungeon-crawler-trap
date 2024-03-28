@@ -20,6 +20,7 @@ public class MapConfig : MonoBehaviour
 
         d.AddLine("XXXXX");
         d.AddLine("X   X");
+        d.AddLine("X X X");
         d.AddLine("X   X");
         d.AddLine("X S X");
         d.AddLine("XXXXX");

@@ -17,7 +17,7 @@ public class GameMap
     public Point spawn;
     public List<EnemyPawn> enemies;
 
-    public GameMap(MapConfig mapConfig) 
+    public GameMap(MapConfig mapConfig)
     {
         config = mapConfig;
 
@@ -25,29 +25,21 @@ public class GameMap
         length = 32;
 
         map = new Tile[width, length];
-        for (int i = 0; i < width; i++) 
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < length; j++) 
+            for (int j = 0; j < length; j++)
             {
                 map[i, j] = new Tile(new Point(i, j), false);
             }
         }
 
-        spawn = new Point(width/2, 0);
-        //RandomWalk();
-        //InstanceMap();
-        //InstaceEdges();
-
-        //Add enemy
-        //AddEnemy(new Point(7, 7), config.enemyPrefabs[0]);
-        //AddEnemy(new Point(8, 7), config.enemyPrefabs[0]);
-
         DungeonLayout dl = config.Dungeon0();
 
         InstanceDungeon(dl);
+        NotifyEnemies(new Point(3, 3));
     }
 
-    private void InstanceDungeon(DungeonLayout dl) 
+    private void InstanceDungeon(DungeonLayout dl)
     {
         ClearDungeon();
 
@@ -57,10 +49,10 @@ public class GameMap
         PopulateMap();
 
         GameObject g;
-        for (int j = 0; j < dl.layout.Count; j++) 
+        for (int j = 0; j < dl.layout.Count; j++)
         {
             char[] s = dl.layout[j].ToCharArray();
-            for (int i = 0; i < s.Length; i++) 
+            for (int i = 0; i < s.Length; i++)
             {
                 // Open tile
                 if (s[i] == ' ' || s[i] == 'S')
@@ -69,7 +61,7 @@ public class GameMap
                     map[i, j].SetPassable(true);
                 }
                 // Wall tile
-                else 
+                else
                 {
                     g = GameObject.Instantiate(dl.wallPrefab);
                     map[i, j].SetPassable(false);
@@ -87,13 +79,13 @@ public class GameMap
 
         List<Trap> traps = new List<Trap>();
         List<Trigger> triggers = new List<Trigger>();
-        foreach (Point point in dl.trapNetwork.traps) 
+        foreach (Point point in dl.trapNetwork.traps)
         {
             g = GameObject.Instantiate(dl.trapPrefab);
             g.transform.SetParent(config.mapParent.transform);
             g.transform.position = new Vector3(point.x, 0.5f, point.z);
             Trap t = g.GetComponent<Trap>();
-            if (t != null) 
+            if (t != null)
             {
                 traps.Add(t);
                 t.gameMap = this;
@@ -121,27 +113,107 @@ public class GameMap
             }
         }
 
-        foreach (Trap t in traps) 
+        foreach (Trap t in traps)
         {
             t.AddTriggers(triggers);
         }
     }
 
-    private void PopulateMap() 
+    private void PopulateMap()
     {
         map = new Tile[width, length];
-        for (int i = 0; i < width; i++) 
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < length; j ++) 
+            for (int j = 0; j < length; j++)
             {
                 map[i, j] = new Tile(new Point(i, j));
             }
         }
     }
 
-    private void ClearDungeon() 
+    private void ClearDungeon()
     {
 
+    }
+
+    public void NotifyEnemies(Point point)
+    {
+        Debug.Log("notifying!");
+        Debug.Log("Target point: " + point.x + " " + point.z);
+
+        int range = 5;
+
+        // THIS IS A DUMB(ish) APPROACH BUT IM LAZY RN
+        // Iterate through all tiles within range of 5
+        int x0 = (point.x - range < 0) ? 0 : point.x - range;
+        int z0 = (point.z - range < 0) ? 0 : point.z - range;
+        int x1 = (point.x + range > width) ? width : point.x + range + 1;     // Exclusive bounds
+        int z1 = (point.z + range > length) ? length : point.z + range + 1;   // same
+
+        for (int i = x0; i < x1; i++) 
+        {
+            for (int j = z0; j < z1; j++) 
+            {
+                if (isVisibleTo(point, new Point(i, j))) 
+                {
+                    Debug.Log("is visible");
+                }
+            }
+        }
+    }
+
+    private bool isVisibleTo(Point a, Point b)
+    {
+        int steps = 0;
+
+        while (!a.isEqual(b)) 
+        {
+            // get next point
+            Debug.Log("Before: " + b.x + "," + b.z);
+            b = nextVisiblePoint(a, b);
+            Debug.Log("After: " + b.x + "," + b.z);
+
+            // if next point in map is not passable return false
+            if (!inBounds(b) || GetTileAtPoint(b).isPassable) 
+            {
+                return false;
+            }
+
+            // debug
+            steps++;
+            if (steps > 100) 
+            {
+                Debug.Log("func failure");
+                return false;
+            } 
+        }
+
+        return true;
+    }
+
+    private Point nextVisiblePoint(Point a, Point b) 
+    {
+        if (a == null || b == null)
+            return null;
+
+        float angle = (Mathf.Atan2(a.z - b.z, a.x - b.x) + Mathf.PI * 2) % (Mathf.PI * 2);
+
+        if (angle < (7 * Mathf.PI / 4) && angle >= (5 * Mathf.PI / 4))
+        {
+            return new Point(b.x, b.z - 1);
+        }
+        else if (angle >= (3 * Mathf.PI / 4) && angle < (5 * Mathf.PI / 4))
+        {
+            return new Point(b.x - 1, b.z);
+        }
+        else if (angle < (3 * Mathf.PI / 4) && angle >= (Mathf.PI / 4))
+        {
+            return new Point(b.x, b.z + 1);
+        }
+        else
+        {
+            return new Point(b.x + 1, b.z);
+        }
     }
 
     public void AddEnemy(Point point, GameObject enemyPrefab) 
@@ -508,5 +580,12 @@ public class Point
         x = point.x;
         y = point.y;
         z = point.z;
+    }
+
+    public bool isEqual(Point point) 
+    {
+        if (x == point.x && y == point.y && z == point.z)
+            return true;
+        return false;
     }
 }

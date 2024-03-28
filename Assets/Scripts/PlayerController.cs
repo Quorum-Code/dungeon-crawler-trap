@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameUIController guic;
     [SerializeField] private InputActionAsset inputAsset;
     private PlayerInput playerInput;
+    private GameMap gameMap;
 
     IEnumerator animate;
     PlayerPawn playerPawn;
@@ -28,8 +29,8 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("no gameController set");
             Destroy(gameObject);
         }
-        GameMap gm = gameController.GetGameMap();
-        playerPawn = new PlayerPawn(gm.spawn.x, gm.spawn.z, gameObject, gm);
+        gameMap = gameController.GetGameMap();
+        playerPawn = new PlayerPawn(gameMap.spawn.x, gameMap.spawn.z, gameObject, gameMap);
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
 
         // UI events
@@ -46,8 +47,6 @@ public class PlayerController : MonoBehaviour
         {
             ConnectInputEvents();
         }
-
-        
 
         playerInput = GetComponent<PlayerInput>();
         animate = null;
@@ -212,6 +211,7 @@ public class PlayerController : MonoBehaviour
             qe(qeContext);
             qe = null;
         }
+        gameMap.NotifyEnemies(playerPawn.point);
     }
 
     private IEnumerator AnimateMove() 
