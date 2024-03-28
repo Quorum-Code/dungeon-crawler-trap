@@ -117,6 +117,20 @@ public class GameMap
         {
             t.AddTriggers(triggers);
         }
+
+        foreach ((Point, GameObject) e in dl.enemies) 
+        {
+            if (!inBounds(e.Item1))
+                continue;
+
+            g = GameObject.Instantiate(e.Item2);
+            EnemyController ec = g.GetComponent<EnemyController>();
+            if (ec != null) 
+            {
+                Tile t = GetTileAtPoint(e.Item1);
+                t.pawn = ec.enemyPawn;
+            }
+        }
     }
 
     private void PopulateMap()

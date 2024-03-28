@@ -8,8 +8,10 @@ public class MapConfig : MonoBehaviour
 
     public GameObject[] tilePrefabs;
     public GameObject[] wallPrefabs;
+
     public GameObject[] triggerPrefabs;
     public GameObject[] trapPrefabs;
+
     public GameObject[] enemyPrefabs;
 
     private DungeonLayout[] dungeons;
@@ -31,6 +33,8 @@ public class MapConfig : MonoBehaviour
         d.trapNetwork.traps.Add(new Point(2, 3));
         d.trapNetwork.triggers.Add(new Point(2, 3));
 
+        d.AddEnemy(new Point(2, 4), enemyPrefabs[0]);
+
         return d;
     }
 
@@ -46,6 +50,8 @@ public class MapConfig : MonoBehaviour
 
         public int width = -1;
         public int length = -1;
+
+        List<(Point, GameObject)> enemies = new List<(Point, GameObject)>();
 
         // Layout keys
         // ---------------
@@ -92,6 +98,11 @@ public class MapConfig : MonoBehaviour
                 if (s.Length > width)
                     width = s.Length;
             }
+        }
+
+        public void AddEnemy(Point point, GameObject enemyPrefab) 
+        {
+            enemies.Add((point, enemyPrefab));
         }
 
         public class TrapNetwork 
