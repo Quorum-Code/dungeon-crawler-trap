@@ -11,3 +11,4 @@ Trip the Trap is a game about uncovering the secrets of an ancient dungeon, spec
 - [Rogue Fantasy Catacombs](https://szadiart.itch.io/rogue-fantasy-catacombs), by "Szadi art".
 - [Monster & Giant Asset Pack](https://deepdivegamestudio.itch.io/monstergiantassetpack), by DeepDiveGameStudio.
 - [Undead Asset Pack](https://deepdivegamestudio.itch.io/undead-asset-pack), by DeepDiveGameStudio.
+- [Pixeloid](https://ggbot.itch.io/pixeloid-font), by GGBotNet.
