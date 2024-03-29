@@ -4,6 +4,8 @@ public class Pawn
 {
     public readonly Point point;
 
+    public bool isPlayer { get; private set; } = false;
+
     public int maxHealth { get; protected set; } = 3;
     public int health { get; protected set; } = 3;
 
@@ -16,11 +18,12 @@ public class Pawn
     protected GameObject gameObject;
     protected Direction facing = Direction.North;
 
-    public Pawn(int x, int z, GameObject gameObject, GameMap gameMap) 
+    public Pawn(int x, int z, GameObject gameObject, GameMap gameMap, bool isPlayer) 
     {
         point = new Point(x, z);
         this.gameObject = gameObject;
         this.gameMap = gameMap;
+        this.isPlayer = isPlayer;
     }
 
     public virtual bool Move(int x, int z) 

@@ -7,6 +7,7 @@ using static MapConfig;
 
 public class GameMap
 {
+    public bool isLoading = true;
     MapConfig config;
 
     int width;      // x
@@ -43,19 +44,123 @@ public class GameMap
         InstanceDungeon(dl);
     }
 
-    public void LoadNextLevel() 
+    public IEnumerator LoadDungeon(DungeonLayout dl) 
     {
-        // Clear objects
-        //ClearDungeon();
+        isLoading = true;
 
-        // Instance dungeon
-        //DungeonLayout dl = config.Dungeon1();
-        //InstanceDungeon(dl);
-    }
+        ClearDungeon();
 
-    public IEnumerator LoadDungeon() 
-    {
-        yield return null;
+        width = dl.GetWidth();
+        length = dl.GetLength();
+
+        PopulateMap();
+
+        // Instance tiles
+        GameObject g;
+        for (int j = 0; j < dl.layout.Count; j++)
+        {
+            char[] s = dl.layout[j].ToCharArray();
+            for (int i = 0; i < s.Length; i++)
+            {
+                // Open tile
+                if (s[i] == ' ' || s[i] == 'S')
+                {
+                    g = GameObject.Instantiate(dl.tilePrefab);
+                    map[i, j].SetPassable(true);
+                }
+                // Wall tile
+                else if (s[i] == 'E')
+                {
+                    g = GameObject.Instantiate(dl.exitPrefab);
+                    endObject = g;
+                    map[i, j].SetPassable(true);
+                    end = new Point(i, j);
+                }
+                else
+                {
+                    g = GameObject.Instantiate(dl.wallPrefab);
+                    map[i, j].SetPassable(false);
+                }
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(i, .5f, j);
+
+                // Set spawn point
+                if (s[i] == 'S')
+                {
+                    spawn = new Point(i, j);
+                }
+                yield return null;
+            }
+        }
+
+        if (dl.trapNetwork != null)
+        {
+            List<Trap> traps = new List<Trap>();
+            List<Trigger> triggers = new List<Trigger>();
+            foreach (Point point in dl.trapNetwork.traps)
+            {
+                g = GameObject.Instantiate(dl.trapPrefab);
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(point.x, 0.5f, point.z);
+                Trap t = g.GetComponent<Trap>();
+                if (t != null)
+                {
+                    traps.Add(t);
+                    t.gameMap = this;
+                    t.point = point;
+                }
+                yield return null;
+            }
+
+            foreach (Point point in dl.trapNetwork.triggers)
+            {
+                g = GameObject.Instantiate(dl.triggerPrefab);
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(point.x, 0.5f, point.z);
+                Trigger t = g.GetComponent<Trigger>();
+                if (t != null)
+                {
+                    t.point = point;
+                    triggers.Add(t);
+                    t.gameMap = this;
+                    t.AddTraps(traps);
+                    Tile tile = GetTileAtPoint(point);
+                    if (tile != null)
+                    {
+                        tile.trigger = t;
+                    }
+                }
+                yield return null;
+            }
+
+            foreach (Trap t in traps)
+            {
+                t.AddTriggers(triggers);
+            }
+        }
+
+        foreach ((Point, GameObject) e in dl.enemies)
+        {
+            Point point = e.Item1;
+
+            if (!inBounds(point))
+                continue;
+
+            g = GameObject.Instantiate(e.Item2);
+            g.transform.SetParent(config.mapParent.transform);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
+            EnemyController ec = g.GetComponent<EnemyController>();
+            if (ec != null)
+            {
+                Tile t = GetTileAtPoint(point);
+                ec.Ready(point, this);
+                t.pawn = ec.enemyPawn;
+                Debug.Log("enemyController found");
+            }
+            yield return null;
+        }
+
+        isLoading = false;
     }
 
     private void InstanceDungeon(DungeonLayout dl)
@@ -188,6 +293,11 @@ public class GameMap
         }
     }
 
+    public void EndMove() 
+    {
+
+    }
+
     public void CheckIsEnd(PlayerPawn playerPawn) 
     {
         if (playerPawn.point.isEqual(end)) 
@@ -199,9 +309,6 @@ public class GameMap
             {
                 animator.Play("OpenDoor");
             }
-
-            endFound();
-            LoadNextLevel();
         }
     }
 
@@ -300,6 +407,12 @@ public class GameMap
         if (t != null && t.trigger) 
         {
             t.trigger.Activate();
+        }
+
+        if (point.isEqual(end) && t != null && t.pawn.isPlayer) 
+        {
+            Debug.Log("endFound()");
+            endFound();
         }
     }
 
@@ -651,5 +764,23 @@ public class Point
         if (x == point.x && y == point.y && z == point.z)
             return true;
         return false;
+    }
+
+    public static bool operator== (Point point1, Point point2) 
+    {
+        if (point1 is null && point2 is null)
+            return true;
+
+        if (point1 is null || point2 is null)
+            return false;
+
+        if (point1.x == point2.x && point1.y == point2.y && point1.z == point2.z)
+            return true;
+        return false;
+    }
+
+    public static bool operator !=(Point point1, Point point2)
+    {
+        return !(point1 == point2);
     }
 }

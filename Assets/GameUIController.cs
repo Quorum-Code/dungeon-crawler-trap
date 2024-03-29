@@ -157,4 +157,23 @@ public class GameUIController : MonoBehaviour
         // set opacity to max
         blackout.color = Color.black;
     }
+
+    public void FadeScreenOut() 
+    {
+        StartCoroutine(FadeBlackout());
+    }
+
+    private IEnumerator FadeBlackout() 
+    {
+        float timer = 0;
+        float total = 0.3f;
+        while (timer < 0.3f) 
+        {
+            timer += Time.deltaTime;
+            blackout.color = new Color(0, 0, 0, 1 - (timer/total));
+            yield return null;
+        }
+        blackout.color = new Color(0, 0, 0, 0);
+        blackout.enabled = false;
+    }
 }

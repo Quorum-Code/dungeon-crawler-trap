@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
     [SerializeField] GameUIController guic;
     GameMap gm;
 
+    bool waiting = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +19,19 @@ public class GameController : MonoBehaviour
 
         gm = new GameMap(mapConfig);
         gm.endFound = FoundEnd;
-        StartCoroutine(gm.LoadDungeon());
+        gm.isLoading = true;
+        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon0()));
+        StartCoroutine(WaitForLoading());
+    }
 
-        if (playerController == null) 
+    private IEnumerator WaitForLoading() 
+    {
+        while (gm.isLoading) 
         {
-            Debug.LogError("no playerController");
-            Destroy(gameObject);
+            yield return null;
         }
-
         playerController.Ready();
+        guic.FadeScreenOut();
     }
 
     public GameMap GetGameMap() 
@@ -35,8 +41,10 @@ public class GameController : MonoBehaviour
 
     private void FoundEnd() 
     {
-        Debug.Log("start loading next level!");
-
         playerController.guic.BlackoutScreen();
+
+        gm.isLoading = true;
+        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon1()));
+        StartCoroutine(WaitForLoading());
     }
 }

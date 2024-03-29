@@ -8,7 +8,7 @@ public class EnemyPawn : Pawn
     PawnMoved pm;
     IEnumerator animate;
 
-    public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap) 
+    public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, false) 
     {
         EnemyController ec = gameObject.GetComponent<EnemyController>();
         if (ec != null ) 

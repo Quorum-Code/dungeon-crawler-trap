@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
         gameMap = gameController.GetGameMap();
         playerPawn = new PlayerPawn(gameMap.spawn.x, gameMap.spawn.z, gameObject, gameMap);
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
         // UI events
         guic.Init(playerPawn);
@@ -53,14 +54,13 @@ public class PlayerController : MonoBehaviour
         animate = null;
     }
 
-    private void Update()
-    {
-        playerPawn.IncStaminaTime(Time.deltaTime);
-    }
-
     private void FixedUpdate()
     {
-        guic.UpdateStaminaProgress(playerPawn);
+        if (playerPawn != null && guic != null) 
+        {
+            playerPawn.IncStaminaTime(Time.deltaTime);
+            guic.UpdateStaminaProgress(playerPawn);
+        }
     }
 
     private void TestDebug() 
@@ -181,6 +181,9 @@ public class PlayerController : MonoBehaviour
 
     private void TryMove(int dx, int dz) 
     {
+        if (gameMap == null)
+            return;
+
         if (playerPawn.curStamina > 0 && animate == null)
         {
             bool ok = playerPawn.Move(dx, dz);
