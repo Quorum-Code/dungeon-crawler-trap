@@ -21,6 +21,8 @@ public class GameUIController : MonoBehaviour
     [SerializeField] Sprite emptyHeart;
     [SerializeField] Sprite[] xpBar;
 
+    [SerializeField] Image blackout;
+
     int maxHealth = 0;
     int curHealth = 0;
     List<GameObject> hearts = new List<GameObject>();
@@ -145,5 +147,14 @@ public class GameUIController : MonoBehaviour
                 img.color = Color.white;
             }
         }
+    }
+
+    public void BlackoutScreen() 
+    {
+        // enable img
+        blackout.enabled = true;
+
+        // set opacity to max
+        blackout.color = Color.black;
     }
 }

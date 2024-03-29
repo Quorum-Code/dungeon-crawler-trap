@@ -8,6 +8,7 @@ public class MapConfig : MonoBehaviour
 
     public GameObject[] tilePrefabs;
     public GameObject[] wallPrefabs;
+    public GameObject exitPrefab;
 
     public GameObject[] triggerPrefabs;
     public GameObject[] trapPrefabs;
@@ -18,9 +19,22 @@ public class MapConfig : MonoBehaviour
 
     public DungeonLayout Dungeon0() 
     {
-        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0]);
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
 
-        d.AddLine("XXXXX");
+        d.AddLine("XEX");
+        d.AddLine("X X");
+        d.AddLine("X X");
+        d.AddLine("XSX");
+        d.AddLine("XXX");
+
+        return d;
+    }
+
+    public DungeonLayout Dungeon1() 
+    {
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
+
+        d.AddLine("XXEXX");
         d.AddLine("X   X");
         d.AddLine("X X X");
         d.AddLine("X   X");
@@ -44,6 +58,7 @@ public class MapConfig : MonoBehaviour
 
         public GameObject tilePrefab;
         public GameObject wallPrefab;
+        public GameObject exitPrefab;
         public GameObject triggerPrefab;
         public GameObject trapPrefab;
         public TrapNetwork trapNetwork;
@@ -58,12 +73,14 @@ public class MapConfig : MonoBehaviour
         // 'X' -> wall
         // ' ' -> open tile
         // 'S' -> spawn
+        // 'E' -> exit
         public List<string> layout = new List<string>();
 
-        public DungeonLayout(GameObject tilePrefab, GameObject wallPrefab) 
+        public DungeonLayout(GameObject tilePrefab, GameObject wallPrefab, GameObject exitPrefab) 
         {
             this.tilePrefab = tilePrefab;
             this.wallPrefab = wallPrefab;
+            this.exitPrefab = exitPrefab;
         }
 
         public void AddLine(string line) 

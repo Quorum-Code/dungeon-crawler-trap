@@ -14,7 +14,7 @@ public class PlayerPawn : Pawn
     public UpdateUI updateStamina;
 
     public int maxStamina { get; private set; } = 3;
-    public int curStamina { get; private set; } = 0;
+    public int curStamina { get; private set; } = 1;
     public float toNextStamina { get; private set; } = 0f;
     public float regenStaminaTime { get; private set; } = 0.75f;
 

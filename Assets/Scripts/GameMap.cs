@@ -15,7 +15,13 @@ public class GameMap
     Tile[,] map;    // x,z
 
     public Point spawn;
+    public Point end;
     public List<EnemyPawn> enemies;
+
+    public delegate void MoveEvent();
+    public MoveEvent endFound;
+
+    private GameObject endObject;
 
     public GameMap(MapConfig mapConfig)
     {
@@ -34,9 +40,22 @@ public class GameMap
         }
 
         DungeonLayout dl = config.Dungeon0();
-
         InstanceDungeon(dl);
-        NotifyEnemies(new Point(3, 3));
+    }
+
+    public void LoadNextLevel() 
+    {
+        // Clear objects
+        //ClearDungeon();
+
+        // Instance dungeon
+        //DungeonLayout dl = config.Dungeon1();
+        //InstanceDungeon(dl);
+    }
+
+    public IEnumerator LoadDungeon() 
+    {
+        yield return null;
     }
 
     private void InstanceDungeon(DungeonLayout dl)
@@ -61,6 +80,13 @@ public class GameMap
                     map[i, j].SetPassable(true);
                 }
                 // Wall tile
+                else if (s[i] == 'E') 
+                {
+                    g = GameObject.Instantiate(dl.exitPrefab);
+                    endObject = g;
+                    map[i, j].SetPassable(true);
+                    end = new Point(i, j);
+                }
                 else
                 {
                     g = GameObject.Instantiate(dl.wallPrefab);
@@ -77,45 +103,48 @@ public class GameMap
             }
         }
 
-        List<Trap> traps = new List<Trap>();
-        List<Trigger> triggers = new List<Trigger>();
-        foreach (Point point in dl.trapNetwork.traps)
+        if (dl.trapNetwork != null) 
         {
-            g = GameObject.Instantiate(dl.trapPrefab);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(point.x, 0.5f, point.z);
-            Trap t = g.GetComponent<Trap>();
-            if (t != null)
+            List<Trap> traps = new List<Trap>();
+            List<Trigger> triggers = new List<Trigger>();
+            foreach (Point point in dl.trapNetwork.traps)
             {
-                traps.Add(t);
-                t.gameMap = this;
-                t.point = point;
-            }
-        }
-
-        foreach (Point point in dl.trapNetwork.triggers)
-        {
-            g = GameObject.Instantiate(dl.triggerPrefab);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(point.x, 0.5f, point.z);
-            Trigger t = g.GetComponent<Trigger>();
-            if (t != null)
-            {
-                t.point = point;
-                triggers.Add(t);
-                t.gameMap = this;
-                t.AddTraps(traps);
-                Tile tile = GetTileAtPoint(point);
-                if (tile != null)
+                g = GameObject.Instantiate(dl.trapPrefab);
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(point.x, 0.5f, point.z);
+                Trap t = g.GetComponent<Trap>();
+                if (t != null)
                 {
-                    tile.trigger = t;
+                    traps.Add(t);
+                    t.gameMap = this;
+                    t.point = point;
                 }
             }
-        }
 
-        foreach (Trap t in traps)
-        {
-            t.AddTriggers(triggers);
+            foreach (Point point in dl.trapNetwork.triggers)
+            {
+                g = GameObject.Instantiate(dl.triggerPrefab);
+                g.transform.SetParent(config.mapParent.transform);
+                g.transform.position = new Vector3(point.x, 0.5f, point.z);
+                Trigger t = g.GetComponent<Trigger>();
+                if (t != null)
+                {
+                    t.point = point;
+                    triggers.Add(t);
+                    t.gameMap = this;
+                    t.AddTraps(traps);
+                    Tile tile = GetTileAtPoint(point);
+                    if (tile != null)
+                    {
+                        tile.trigger = t;
+                    }
+                }
+            }
+
+            foreach (Trap t in traps)
+            {
+                t.AddTriggers(triggers);
+            }
         }
 
         foreach ((Point, GameObject) e in dl.enemies) 
@@ -153,7 +182,27 @@ public class GameMap
 
     private void ClearDungeon()
     {
+        foreach (Transform child in config.mapParent.transform) 
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
 
+    public void CheckIsEnd(PlayerPawn playerPawn) 
+    {
+        if (playerPawn.point.isEqual(end)) 
+        {
+            Debug.Log("Reached end of level");
+
+            Animator animator = endObject.GetComponent<Animator>();
+            if (animator != null) 
+            {
+                animator.Play("OpenDoor");
+            }
+
+            endFound();
+            LoadNextLevel();
+        }
     }
 
     public void NotifyEnemies(Point point)

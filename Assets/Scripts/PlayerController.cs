@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameUIController guic;
+    [SerializeField] public GameUIController guic;
     [SerializeField] private InputActionAsset inputAsset;
     private PlayerInput playerInput;
     private GameMap gameMap;
@@ -181,9 +181,11 @@ public class PlayerController : MonoBehaviour
 
     private void TryMove(int dx, int dz) 
     {
-        if (animate == null)
+        if (playerPawn.curStamina > 0 && animate == null)
         {
             bool ok = playerPawn.Move(dx, dz);
+            gameMap.CheckIsEnd(playerPawn);
+
             if (ok)
             {
                 // move
