@@ -34,12 +34,12 @@ public class MapConfig : MonoBehaviour
     {
         DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
 
-        d.AddLine("XXEXX");
-        d.AddLine("X   X");
-        d.AddLine("X X X");
-        d.AddLine("X   X");
-        d.AddLine("X S X");
-        d.AddLine("XXXXX");
+        d.AddLine("XXEXXXX");
+        d.AddLine("X     X");
+        d.AddLine("X     X");
+        d.AddLine("X     X");
+        d.AddLine("X S   X");
+        d.AddLine("XXXXXXX");
 
         d.triggerPrefab = triggerPrefabs[0];
         d.trapPrefab = trapPrefabs[0];
@@ -47,7 +47,7 @@ public class MapConfig : MonoBehaviour
         d.trapNetwork.traps.Add(new Point(1, 4));
         d.trapNetwork.triggers.Add(new Point(1, 4));
 
-        d.AddEnemy(new Point(2, 4), enemyPrefabs[0]);
+        d.AddEnemy(new Point(2, 3), enemyPrefabs[0]);
 
         return d;
     }

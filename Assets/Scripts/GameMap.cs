@@ -302,8 +302,6 @@ public class GameMap
     {
         if (playerPawn.point.isEqual(end)) 
         {
-            Debug.Log("Reached end of level");
-
             Animator animator = endObject.GetComponent<Animator>();
             if (animator != null) 
             {
@@ -409,7 +407,12 @@ public class GameMap
             t.trigger.Activate();
         }
 
-        if (point.isEqual(end) && t != null && t.pawn.isPlayer) 
+        if (t.pawn != null && t.pawn.health <= 0) 
+        {
+            t.pawn = null;
+        }
+
+        if (point.isEqual(end) && t != null && t.pawn != null && t.pawn.isPlayer) 
         {
             Debug.Log("endFound()");
             endFound();
