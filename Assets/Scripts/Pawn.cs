@@ -43,6 +43,11 @@ public class Pawn
 
     }
 
+    public virtual void Notify(PlayerPawn playerPawn) 
+    {
+
+    }
+
     protected enum Direction 
     {
         North,  // +z

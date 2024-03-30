@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static MapConfig;
@@ -155,7 +156,6 @@ public class GameMap
                 Tile t = GetTileAtPoint(point);
                 ec.Ready(point, this);
                 t.pawn = ec.enemyPawn;
-                Debug.Log("enemyController found");
             }
             yield return null;
         }
@@ -310,78 +310,26 @@ public class GameMap
         }
     }
 
-    public void NotifyEnemies(Point point)
+    public void NotifyEnemies(PlayerPawn playerPawn)
     {
-        int range = 5;
-
-        // THIS IS A DUMB(ish) APPROACH BUT IM LAZY RN
-        // Iterate through all tiles within range of 5
-        int x0 = (point.x - range < 0) ? 0 : point.x - range;
-        int z0 = (point.z - range < 0) ? 0 : point.z - range;
-        int x1 = (point.x + range > width) ? width : point.x + range + 1;     // Exclusive bounds
-        int z1 = (point.z + range > length) ? length : point.z + range + 1;   // same
-
-        for (int i = x0; i < x1; i++) 
-        {
-            for (int j = z0; j < z1; j++) 
-            {
-                if (isVisibleTo(point, new Point(i, j))) 
-                {
-
-                }
-            }
-        }
+        NotifyDirection(playerPawn, 0, 1);
+        NotifyDirection(playerPawn, 0, -1);
+        NotifyDirection(playerPawn, 1, 0);
+        NotifyDirection(playerPawn, -1, 0);
     }
 
-    private bool isVisibleTo(Point a, Point b)
+    private void NotifyDirection(PlayerPawn playerPawn, int x, int z) 
     {
-        int steps = 0;
-
-        while (!a.isEqual(b)) 
+        for (int i = 1; i <= 5; i++)
         {
-            // get next point
-            b = nextVisiblePoint(a, b);
-
-            // if next point in map is not passable return false
-            if (!inBounds(b) || GetTileAtPoint(b).isPassable) 
+            Point point = new Point(playerPawn.point.x + (i * x), playerPawn.point.z + (i * z));
+            Tile t = GetTileAtPoint(point);
+            if (!inBounds(point) || !t.isPassable)
+                break;
+            else if (t.pawn != null)
             {
-                return false;
+                t.pawn.Notify(playerPawn);
             }
-
-            // debug
-            steps++;
-            if (steps > 100) 
-            {
-                Debug.Log("func failure");
-                return false;
-            } 
-        }
-
-        return true;
-    }
-
-    private Point nextVisiblePoint(Point a, Point b) 
-    {
-        if (a == null || b == null)
-            return null;
-
-        float angle = (Mathf.Atan2(a.z - b.z, a.x - b.x) + Mathf.PI * 2) % (Mathf.PI * 2);
-
-        if (angle < (7 * Mathf.PI / 4) && angle >= (5 * Mathf.PI / 4))
-        {
-            return new Point(b.x, b.z - 1);
-        }
-        else if (angle >= (3 * Mathf.PI / 4) && angle < (5 * Mathf.PI / 4))
-        {
-            return new Point(b.x - 1, b.z);
-        }
-        else if (angle < (3 * Mathf.PI / 4) && angle >= (Mathf.PI / 4))
-        {
-            return new Point(b.x, b.z + 1);
-        }
-        else
-        {
-            return new Point(b.x + 1, b.z);
         }
     }
 
@@ -677,9 +625,11 @@ public class GameMap
         return inBounds(point.x, point.y, point.z);
     }
 
-    public bool canMoveTo(Point point) 
+    public bool canMoveTo(Pawn pawn, Point point) 
     {
         if (!inBounds(point) || !map[point.x, point.z].isPassable || map[point.x, point.z].pawn != null)
+            return false;
+        if (point == end && !pawn.isPlayer)
             return false;
         return true;
     }

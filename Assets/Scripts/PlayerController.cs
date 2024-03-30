@@ -231,7 +231,7 @@ public class PlayerController : MonoBehaviour
             qe(qeContext);
             qe = null;
         }
-        gameMap.NotifyEnemies(playerPawn.point);
+        gameMap.NotifyEnemies(playerPawn);
     }
 
     private IEnumerator AnimateMove() 

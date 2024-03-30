@@ -7,6 +7,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public EnemyPawn enemyPawn;
+    IEnumerator chase;
     IEnumerator animateMove;
     [SerializeField] GameObject surpriseObject;
     [SerializeField] Animation deathAnimation;
@@ -17,7 +18,7 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Chase());
+
     }
 
     public void Ready(Point point, GameMap gameMap) 
@@ -40,6 +41,8 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator AnimateMove()
     {
+        isMoving = true;
+
         Vector3 init = transform.position;
         Vector3 post = new Vector3(enemyPawn.point.x, 0.5f, enemyPawn.point.z);
 
@@ -60,6 +63,19 @@ public class EnemyController : MonoBehaviour
             // play death anim
             animator.Play("SlimeDeath");
         }
+
+        animateMove = null;
+        isMoving = false;
+    }
+
+    public void StartChase(PlayerPawn playerPawn) 
+    {
+        if (chase != null)
+            return;
+
+        this.playerPawn = playerPawn;
+        chase = Chase();
+        StartCoroutine(chase);
     }
 
     private IEnumerator Chase() 
@@ -87,19 +103,26 @@ public class EnemyController : MonoBehaviour
         {
             if (playerPawn == null)
                 break;
+                
 
             if (!isMoving)
                 total += Time.deltaTime;
             // call animateMove
             if (total > timer) 
             {
+                if (!enemyPawn.MoveTowardsPlayer(playerPawn))
+                {
+                    break;
+                }
+
                 total = 0f;
                 animateMove = AnimateMove();
                 StartCoroutine(animateMove);
             }
-            
+
             yield return null;
         }
+        Debug.Log("Chase ended");
     }
 
     public void Death() 

@@ -67,7 +67,7 @@ public class PlayerPawn : Pawn
         {
             return false;
         }
-        else if (gameMap.canMoveTo(nextPoint))
+        else if (gameMap.canMoveTo(this, nextPoint))
         {
             ConsumeStamina();
             gameMap.MovePawnTo(this, nextPoint);
