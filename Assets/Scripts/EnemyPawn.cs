@@ -10,7 +10,7 @@ public class EnemyPawn : Pawn
     PawnMoved pm;
     IEnumerator animate;
 
-    public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, false) 
+    public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Enemy) 
     {
         enemyController = gameObject.GetComponent<EnemyController>();
         if (enemyController != null) 
@@ -36,6 +36,8 @@ public class EnemyPawn : Pawn
         else if (gameMap.isPlayerAtPoint(nextPoint))
         {
             enemyController.playerPawn.Damage(1);
+
+            pm();
             return true;
         }
         else if (gameMap.isPawnAtPoint(nextPoint)) 
@@ -51,6 +53,7 @@ public class EnemyPawn : Pawn
             return false;
 
         (int, int) dir = DirTowardsPlayer(playerPawn);
+        Debug.Log(dir);
         int dx = dir.Item1;
         int dz = dir.Item2;
 

@@ -276,7 +276,7 @@ public class GameMap
     public bool isPlayerAtPoint(Point point) 
     {
         Tile t = GetTileAtPoint(point);
-        if (t != null && t.pawn != null && t.pawn.isPlayer)
+        if (t != null && t.pawn != null && t.pawn.type == PawnType.Player)
         {
             return true;
         }
@@ -380,7 +380,7 @@ public class GameMap
             t.pawn = null;
         }
 
-        if (point.isEqual(end) && t != null && t.pawn != null && t.pawn.isPlayer) 
+        if (point.isEqual(end) && t != null && t.pawn != null && t.pawn.type == PawnType.Player) 
         {
             Debug.Log("endFound()");
             endFound();
@@ -649,7 +649,7 @@ public class GameMap
     {
         if (!inBounds(point) || !map[point.x, point.z].isPassable || map[point.x, point.z].pawn != null)
             return false;
-        if (point == end && !pawn.isPlayer)
+        if (point == end && pawn.type != PawnType.Player)
             return false;
         return true;
     }

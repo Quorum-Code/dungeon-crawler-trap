@@ -47,7 +47,7 @@ public class MapConfig : MonoBehaviour
         d.trapNetwork.traps.Add(new Point(1, 4));
         d.trapNetwork.triggers.Add(new Point(1, 4));
 
-        d.AddEnemy(new Point(2, 3), enemyPrefabs[0]);
+        d.AddEnemy(new Point(3, 3), enemyPrefabs[0]);
 
         return d;
     }

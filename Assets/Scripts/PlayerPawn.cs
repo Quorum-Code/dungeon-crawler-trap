@@ -18,7 +18,7 @@ public class PlayerPawn : Pawn
     public float toNextStamina { get; private set; } = 0f;
     public float regenStaminaTime { get; private set; } = 0.75f;
 
-    public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, true)
+    public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Player)
     {
         
     }

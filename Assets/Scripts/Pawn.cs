@@ -1,10 +1,19 @@
 using UnityEngine;
 
+public enum PawnType 
+{
+    None,
+    Player,
+    Enemy,
+    Potion,
+    Interactable
+}
+
 public class Pawn
 {
     public readonly Point point;
 
-    public bool isPlayer { get; private set; } = false;
+    public PawnType type;
 
     public int maxHealth { get; protected set; } = 3;
     public int health { get; protected set; } = 3;
@@ -18,12 +27,12 @@ public class Pawn
     protected GameObject gameObject;
     protected Direction facing = Direction.North;
 
-    public Pawn(int x, int z, GameObject gameObject, GameMap gameMap, bool isPlayer) 
+    public Pawn(int x, int z, GameObject gameObject, GameMap gameMap, PawnType type) 
     {
         point = new Point(x, z);
         this.gameObject = gameObject;
         this.gameMap = gameMap;
-        this.isPlayer = isPlayer;
+        this.type = type;
     }
 
     public virtual bool Move(int x, int z) 

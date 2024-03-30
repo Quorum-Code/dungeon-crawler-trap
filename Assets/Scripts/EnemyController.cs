@@ -16,11 +16,6 @@ public class EnemyController : MonoBehaviour
     public PlayerPawn playerPawn;
     public bool isMoving = false;
 
-    private void Start()
-    {
-
-    }
-
     public void Ready(Point point, GameMap gameMap) 
     {
         enemyPawn = new EnemyPawn(point.x, point.z, gameObject, gameMap);
@@ -35,8 +30,17 @@ public class EnemyController : MonoBehaviour
     {
         if (animateMove != null)
             StopCoroutine(animateMove);
-        animateMove = AnimateMove();
-        StartCoroutine(animateMove);
+
+        if ((int)gameObject.transform.position.x  == enemyPawn.point.x && (int)gameObject.transform.position.z == enemyPawn.point.z)
+        {
+            animateMove = AnimateBump(enemyPawn.DirTowardsPlayer(playerPawn));
+            StartCoroutine(animateMove);
+        }
+        else
+        {
+            animateMove = AnimateMove();
+            StartCoroutine(animateMove);
+        }
     }
 
     private IEnumerator AnimateMove()
@@ -112,6 +116,7 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator Chase() 
     {
+        Debug.Log("Chase started");
         // Show '!'
         // enable object
         surpriseObject.SetActive(true);
@@ -135,28 +140,16 @@ public class EnemyController : MonoBehaviour
         {
             if (playerPawn == null)
                 break;
-                
 
-            if (!isMoving)
+            if (animateMove == null)
                 total += Time.deltaTime;
+            else
+                total = 0f;
             // call animateMove
-            if (total > timer) 
+            if (total > timer)
             {
                 if (!enemyPawn.MoveTowardsPlayer(playerPawn))
-                {
                     break;
-                }
-
-                if ((int)gameObject.transform.position.x == enemyPawn.point.x && (int)gameObject.transform.position.z == enemyPawn.point.z)
-                {
-                    animateMove = AnimateBump(enemyPawn.DirTowardsPlayer(playerPawn));
-                    StartCoroutine(animateMove);
-                }
-                else 
-                {
-                    animateMove = AnimateMove();
-                    StartCoroutine(animateMove);
-                }
 
                 total = 0f;
             }
