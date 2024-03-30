@@ -35,7 +35,6 @@ public class Pawn
     {
         // TODO: override with events for player/enemy pawns
         health -= d;
-        Debug.Log("new health: " + health);
     }
 
     public virtual void AddXp(int xp) 

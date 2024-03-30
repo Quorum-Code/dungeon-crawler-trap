@@ -273,6 +273,26 @@ public class GameMap
         }
     }
 
+    public bool isPlayerAtPoint(Point point) 
+    {
+        Tile t = GetTileAtPoint(point);
+        if (t != null && t.pawn != null && t.pawn.isPlayer)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool isPawnAtPoint(Point point) 
+    {
+        Tile t = GetTileAtPoint(point);
+        if (t != null && t.pawn != null) 
+        {
+            return true;
+        }
+        return false;
+    }
+
     private void PopulateMap()
     {
         map = new Tile[width, length];

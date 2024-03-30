@@ -68,6 +68,38 @@ public class EnemyController : MonoBehaviour
         isMoving = false;
     }
 
+    private IEnumerator AnimateBump((int, int) dir) 
+    {
+        isMoving = true;
+
+        int dx = dir.Item1;
+        int dz = dir.Item2;
+
+        Vector3 init = gameObject.transform.position;
+        Vector3 post = new Vector3(enemyPawn.point.x + dx * .2f, 0.5f, enemyPawn.point.z + dz * .2f);
+
+        float t = 0f;
+        float end = 0.075f;
+        while (t < end)
+        {
+            t += Time.deltaTime;
+            gameObject.transform.position = Vector3.Lerp(init, post, t / end);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < end)
+        {
+            t += Time.deltaTime;
+            gameObject.transform.position = Vector3.Lerp(post, init, t / end);
+            yield return null;
+        }
+        gameObject.transform.position = init;
+
+        animateMove = null;
+        isMoving = false;
+    }
+
     public void StartChase(PlayerPawn playerPawn) 
     {
         if (chase != null)
@@ -115,9 +147,18 @@ public class EnemyController : MonoBehaviour
                     break;
                 }
 
+                if ((int)gameObject.transform.position.x == enemyPawn.point.x && (int)gameObject.transform.position.z == enemyPawn.point.z)
+                {
+                    animateMove = AnimateBump(enemyPawn.DirTowardsPlayer(playerPawn));
+                    StartCoroutine(animateMove);
+                }
+                else 
+                {
+                    animateMove = AnimateMove();
+                    StartCoroutine(animateMove);
+                }
+
                 total = 0f;
-                animateMove = AnimateMove();
-                StartCoroutine(animateMove);
             }
 
             yield return null;

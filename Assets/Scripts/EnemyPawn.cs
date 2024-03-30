@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class EnemyPawn : Pawn
@@ -24,12 +25,21 @@ public class EnemyPawn : Pawn
     public override bool Move(int x, int z) 
     {
         Point nextPoint = new Point(x, z);
-        if (gameMap.canMoveTo(this, nextPoint)) 
+        if (gameMap.canMoveTo(this, nextPoint))
         {
             gameMap.MovePawnTo(this, nextPoint);
             point.Set(nextPoint);
 
             pm();
+            return true;
+        }
+        else if (gameMap.isPlayerAtPoint(nextPoint))
+        {
+            enemyController.playerPawn.Damage(1);
+            return true;
+        }
+        else if (gameMap.isPawnAtPoint(nextPoint)) 
+        {
             return true;
         }
         return false;
@@ -39,6 +49,18 @@ public class EnemyPawn : Pawn
     {
         if (playerPawn == null)
             return false;
+
+        (int, int) dir = DirTowardsPlayer(playerPawn);
+        int dx = dir.Item1;
+        int dz = dir.Item2;
+
+        return (Move(point.x + dx, point.z + dz));
+    }
+
+    public (int, int) DirTowardsPlayer(PlayerPawn playerPawn) 
+    {
+        if (playerPawn == null)
+            return (-1, -1);
 
         // Get delta
         int dx = 0;
@@ -50,7 +72,7 @@ public class EnemyPawn : Pawn
         if (dx != 0 && dz != 0)
             dx = 0;
 
-        return (Move(point.x + dx, point.z + dz));
+        return (dx, dz);
     }
 
     public override void Notify(PlayerPawn playerPawn)

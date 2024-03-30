@@ -91,7 +91,6 @@ public class PlayerPawn : Pawn
 
     public override void Damage(int d)
     {
-        Debug.Log("damaged?");
         base.Damage(d);
         updateHealth();
     }
