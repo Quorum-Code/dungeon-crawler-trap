@@ -39,6 +39,7 @@ public class EndScreenHandler : MonoBehaviour
 
         // enable button stuffs
         endParent.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void BackToMainMenu() 
