@@ -53,7 +53,6 @@ public class EnemyPawn : Pawn
             return false;
 
         (int, int) dir = DirTowardsPlayer(playerPawn);
-        Debug.Log(dir);
         int dx = dir.Item1;
         int dz = dir.Item2;
 

@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour
         gm = new GameMap(mapConfig);
         gm.endFound = FoundEnd;
         gm.isLoading = true;
-        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon0()));
+        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon1()));
         StartCoroutine(WaitForLoading());
     }
 

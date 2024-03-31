@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class PotionController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Potion potionPawn { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    public void Ready(Point point, GameMap gameMap) 
     {
-        
+        potionPawn = new Potion(point.x, point.z, gameObject, gameMap);
     }
 }
 
@@ -22,5 +17,12 @@ public class Potion : Pawn
     public Potion(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Potion) 
     {
 
+    }
+
+    public override void Interact(Pawn pawn)
+    {
+        pawn.Damage(-1);
+        gameMap.RemovePawnAtPoint(point);
+        GameObject.Destroy(gameObject);
     }
 }

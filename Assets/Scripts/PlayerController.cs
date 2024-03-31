@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] public GameUIController guic;
     [SerializeField] private InputActionAsset inputAsset;
+    [SerializeField] private AudioSource damageSource;
+    [SerializeField] private AudioSource shoveSource;
+    [SerializeField] private AudioSource bumpSource;
+    [SerializeField] private AudioSource potionSource;
     private PlayerInput playerInput;
     private GameMap gameMap;
 
@@ -39,6 +43,10 @@ public class PlayerController : MonoBehaviour
         playerPawn.updateHealth = HealthChange;
         playerPawn.updateXp = XpChange;
         playerPawn.updateStamina = StaminaChange;
+        playerPawn.tookDamage = TookDamageEvent;
+        playerPawn.shoveEvent = ShoveEvent;
+        playerPawn.bumpEvent = BumpEvent;
+        playerPawn.healEvent = HealEvent;
 
         if (inputAsset == null)
         {
@@ -61,6 +69,26 @@ public class PlayerController : MonoBehaviour
             playerPawn.IncStaminaTime(Time.deltaTime);
             guic.UpdateStaminaProgress(playerPawn);
         }
+    }
+
+    private void ShoveEvent() 
+    {
+        shoveSource.Play();
+    }
+
+    private void BumpEvent() 
+    {
+        bumpSource.Play();
+    }
+
+    private void TookDamageEvent() 
+    {
+        damageSource.Play();
+    }
+
+    private void HealEvent() 
+    {
+        potionSource.Play();
     }
 
     private void TestDebug() 

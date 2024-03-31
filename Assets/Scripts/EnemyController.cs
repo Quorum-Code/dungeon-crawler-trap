@@ -116,7 +116,6 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator Chase() 
     {
-        Debug.Log("Chase started");
         // Show '!'
         // enable object
         surpriseObject.SetActive(true);

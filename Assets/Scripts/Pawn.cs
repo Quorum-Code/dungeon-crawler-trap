@@ -56,6 +56,11 @@ public class Pawn
 
     }
 
+    public virtual void Interact(Pawn pawn) 
+    {
+
+    }
+
     protected enum Direction 
     {
         North,  // +z

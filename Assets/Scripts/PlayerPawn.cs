@@ -9,12 +9,16 @@ public class PlayerPawn : Pawn
 
     public delegate void UpdateUI();
 
+    public UpdateUI tookDamage;
     public UpdateUI updateHealth;
     public UpdateUI updateXp;
     public UpdateUI updateStamina;
+    public UpdateUI shoveEvent;
+    public UpdateUI bumpEvent;
+    public UpdateUI healEvent;
 
     public int maxStamina { get; private set; } = 3;
-    public int curStamina { get; private set; } = 1;
+    public int curStamina { get; private set; } = 2;
     public float toNextStamina { get; private set; } = 0f;
     public float regenStaminaTime { get; private set; } = 0.75f;
 
@@ -80,17 +84,24 @@ public class PlayerPawn : Pawn
             Pawn enemyPawn = gameMap.GetPawnAtPoint(nextPoint);
             Point pushPoint = MovePoint(dx * 2, dz * 2);
             enemyPawn.Move(pushPoint.x, pushPoint.z);
-            Debug.Log("Shoved enemy! to: " + pushPoint.x + " " + pushPoint.z);
+            // Debug.Log("Shoved enemy! to: " + pushPoint.x + " " + pushPoint.z);
+            shoveEvent();
             return false;
         }
         else
         {
+            bumpEvent();
             return false;
         }
     }
 
     public override void Damage(int d)
     {
+        if (d > 0)
+            tookDamage();
+        else
+            healEvent();
+
         base.Damage(d);
         updateHealth();
     }

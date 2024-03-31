@@ -11,14 +11,14 @@ public class Trap : MonoBehaviour
 
     public void Activate() 
     {
-        Debug.Log("trap activated!");
+        //Debug.Log("trap activated!");
 
         if (gameMap != null) 
         {
             Pawn p = gameMap.GetPawnAtPoint(point);
             if (p != null)
             {
-                Debug.Log("damaged done to a pawn");
+                //Debug.Log("damaged done to a pawn");
                 p.Damage(1);
             }
         }
@@ -26,6 +26,13 @@ public class Trap : MonoBehaviour
         if (animator != null) 
         {
             animator.Play("SpikeActivation");
+        }
+
+        AudioSource audioSource = gameObject.GetComponentInChildren<AudioSource>();
+        if (audioSource != null) 
+        {
+            //Debug.Log("played trap audio");
+            audioSource.Play();
         }
     }
 

@@ -14,6 +14,7 @@ public class MapConfig : MonoBehaviour
     public GameObject[] trapPrefabs;
 
     public GameObject[] enemyPrefabs;
+    public GameObject[] potionPrefabs;
 
     private DungeonLayout[] dungeons;
 
@@ -49,6 +50,8 @@ public class MapConfig : MonoBehaviour
 
         d.AddEnemy(new Point(3, 3), enemyPrefabs[0]);
 
+        d.AddPotion(new Point(1, 1), potionPrefabs[0]);
+
         return d;
     }
 
@@ -67,6 +70,7 @@ public class MapConfig : MonoBehaviour
         public int length = -1;
 
         public List<(Point, GameObject)> enemies = new List<(Point, GameObject)>();
+        public List<(Point, GameObject)> potions = new List<(Point, GameObject)>();
 
         // Layout keys
         // ---------------
@@ -120,6 +124,11 @@ public class MapConfig : MonoBehaviour
         public void AddEnemy(Point point, GameObject enemyPrefab) 
         {
             enemies.Add((point, enemyPrefab));
+        }
+
+        public void AddPotion(Point point, GameObject potionPrefab) 
+        {
+            potions.Add((point, potionPrefab));
         }
 
         public class TrapNetwork 

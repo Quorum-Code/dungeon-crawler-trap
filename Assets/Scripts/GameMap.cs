@@ -41,8 +41,8 @@ public class GameMap
             }
         }
 
-        DungeonLayout dl = config.Dungeon0();
-        InstanceDungeon(dl);
+        // DungeonLayout dl = config.Dungeon0();
+        // InstanceDungeon(dl);
     }
 
     public IEnumerator LoadDungeon(DungeonLayout dl) 
@@ -140,6 +140,7 @@ public class GameMap
             }
         }
 
+        // Spawn enemies
         foreach ((Point, GameObject) e in dl.enemies)
         {
             Point point = e.Item1;
@@ -156,6 +157,27 @@ public class GameMap
                 Tile t = GetTileAtPoint(point);
                 ec.Ready(point, this);
                 t.pawn = ec.enemyPawn;
+            }
+            yield return null;
+        }
+
+        // Spawn potions
+        foreach ((Point, GameObject) p in dl.potions) 
+        {
+            Point point = p.Item1;
+
+            if (!inBounds(point))
+                continue;
+
+            g = GameObject.Instantiate(p.Item2);
+            g.transform.SetParent(config.mapParent.transform);
+            g.transform.position = new Vector3(point.x, 0.5f, point.z);
+            PotionController pc = g.GetComponent<PotionController>();
+            if (pc != null) 
+            {
+                Tile t = GetTileAtPoint(point);
+                pc.Ready(point, this);
+                t.pawn = pc.potionPawn;
             }
             yield return null;
         }
@@ -327,6 +349,12 @@ public class GameMap
             {
                 animator.Play("OpenDoor");
             }
+
+            AudioSource audioSource = endObject.GetComponent<AudioSource>();
+            if (audioSource != null) 
+            {
+                audioSource.Play();
+            }
         }
     }
 
@@ -382,7 +410,7 @@ public class GameMap
 
         if (point.isEqual(end) && t != null && t.pawn != null && t.pawn.type == PawnType.Player) 
         {
-            Debug.Log("endFound()");
+            //Debug.Log("endFound()");
             endFound();
         }
     }
@@ -399,210 +427,6 @@ public class GameMap
         }
     }
 
-    private class Walker 
-    {
-        GameMap map;
-        public int x { get; private set; }
-        public int z { get; private set; }
-        public int dx { get; private set; }
-        public int dz { get; private set; }
-        public int steps = 0;
-
-        public Walker(int x, int z, int dx, int dz, GameMap map) 
-        {
-            this.x = x;
-            this.z = z;
-            this.dx = dx;
-            this.dz = dz;
-            this.map = map;
-        }
-
-        public Walker(Walker walker) 
-        {
-            this.x = walker.x;
-            this.z = walker.z;
-            this.dx = walker.dx;
-            this.dz = walker.dz;
-            this.map = walker.map;
-        }
-
-        [Obsolete("Random dungeon generation no longer s")]
-        public bool Walk() 
-        {
-            steps++;
-            if (steps > 100)
-                return false;
-
-            int nx = x + dx;
-            int nz = z + dz;
-
-            // Stop walking if found another path
-            if (!map.inBounds(new Point(nx, nz)) || map.map[nx, nz].isPassable) 
-            {
-                Turn();
-                nx = x + dx;
-                nz = z + dz;
-                if (!map.inBounds(new Point(nx, nz)) || map.map[nx, nz].isPassable)
-                    return false;
-            }
-            x = nx;
-            z = nz;
-            map.map[nx, nz].SetPassable(true);
-
-            float r = UnityEngine.Random.Range(0f, 1f);
-            if (r < .1f) 
-            {
-                GameObject g = GameObject.Instantiate(map.config.triggerPrefabs[0]);
-                g.transform.SetParent(map.config.mapParent.transform);
-                g.transform.position = new Vector3(x, 0.5f, z);
-                Trigger trig = g.GetComponent<Trigger>();
-                map.map[nx, nz].trigger = trig;
-
-                g = GameObject.Instantiate(map.config.trapPrefabs[0]);
-                g.transform.SetParent(map.config.mapParent.transform);
-                g.transform.position = new Vector3(x, 0.5f, z);
-                Trap trap = g.GetComponent<Trap>();
-
-                trap.point = new Point(x, z);
-                trig.point = new Point(x, z);
-
-                trap.gameMap = map;
-                trig.gameMap = map;
-
-                //trap.triggers.Add(trig);
-                //trig.traps.Add(trap);
-            }
-
-            return true;
-        }
-
-        public void Turn() 
-        {
-            float r = UnityEngine.Random.Range(0f, 1f);
-
-            if (r < .5f)
-            {
-                if (dx == 0)
-                {
-                    dz = 0;
-                    dx = 1;
-                }
-                else 
-                {
-                    dx = 0;
-                    dz = 1;
-                }
-            }
-            else 
-            {
-                if (dx == 0)
-                {
-                    dz = 0;
-                    dx = -1;
-                }
-                else
-                {
-                    dx = 0;
-                    dz = -1;
-                }
-            }
-        }
-    }
-
-    private void RandomWalk() 
-    {
-        List<Walker> walkers = new List<Walker>();
-        map[width / 2, 0].SetPassable(true);
-        walkers.Add(new Walker(width / 2, 0, 0, 1, this));
-        walkers.Add(new Walker(width / 2, 1, 1, 0, this));
-        walkers.Add(new Walker(width / 2, 1, -1, 0, this));
-        walkers.Add(new Walker(width / 2, 1, 0, 1, this));
-
-        while (walkers.Count > 0) 
-        {
-            List<Walker> toRemove = new List<Walker>();
-            List<Walker> toAdd = new List<Walker>();
-
-            float r = 0f;
-            foreach (Walker walker in walkers) 
-            {
-                r = UnityEngine.Random.Range(0f, 1f);
-                if (r < .15f)
-                {
-                    Walker w = new Walker(walker);
-                    w.Turn();
-                    toAdd.Add(w);
-                }
-                else if (r < .3f) 
-                {
-                    walker.Turn();
-                }
-
-                if (!walker.Walk())
-                    toRemove.Add(walker);
-            }
-
-            foreach (Walker walker in toRemove) 
-            {
-                walkers.Remove(walker);
-            }
-            walkers.AddRange(toAdd);
-        }
-    }
-
-    private void InstanceMap() 
-    {
-        GameObject g;
-        foreach (Tile t in map) 
-        {
-            if (!t.isPassable)
-            {
-                g = GameObject.Instantiate(config.wallPrefabs[0]);
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
-            }
-            else 
-            {
-                g = GameObject.Instantiate(config.tilePrefabs[0]);
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
-            }
-
-            if (t.trigger != null) 
-            {
-                g = GameObject.Instantiate(config.triggerPrefabs[0]);
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(t.point.x, t.point.y + .5f, t.point.z);
-            }
-        }
-    }
-
-    private void InstaceEdges() 
-    {
-        GameObject g;
-        // Instance edges
-        for (int i = 0; i < width; i++)
-        {
-            g = GameObject.Instantiate(config.wallPrefabs[0]);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(i, .5f, -1);
-
-            g = GameObject.Instantiate(config.wallPrefabs[0]);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(i, .5f, length);
-        }
-
-        for (int i = 0; i < length; i++)
-        {
-            g = GameObject.Instantiate(config.wallPrefabs[0]);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(-1, .5f, i);
-
-            g = GameObject.Instantiate(config.wallPrefabs[0]);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(width, .5f, i);
-        }
-    }
 
     private class Tile
     {
@@ -647,6 +471,13 @@ public class GameMap
 
     public bool canMoveTo(Pawn pawn, Point point) 
     {
+        Tile t = GetTileAtPoint(point);
+        if (pawn != null && pawn.type == PawnType.Player && t.pawn != null && t.pawn.type == PawnType.Potion)
+        {
+            t.pawn.Interact(pawn);
+            return true;
+        }
+
         if (!inBounds(point) || !map[point.x, point.z].isPassable || map[point.x, point.z].pawn != null)
             return false;
         if (point == end && pawn.type != PawnType.Player)

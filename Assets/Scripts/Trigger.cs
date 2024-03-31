@@ -10,7 +10,7 @@ public class Trigger : MonoBehaviour
 
     public void Activate() 
     {
-        Debug.Log("trigger activated!!!");
+        //Debug.Log("trigger activated!!!");
         foreach (Trap trap in traps) 
         {
             trap.Activate();
@@ -19,7 +19,7 @@ public class Trigger : MonoBehaviour
 
     public void Release()
     {
-        Debug.Log("trigger released!!!");
+        //Debug.Log("trigger released!!!");
         foreach (Trap trap in traps)
         {
             trap.Deactivate();

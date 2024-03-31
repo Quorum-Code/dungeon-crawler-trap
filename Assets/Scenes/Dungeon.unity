@@ -1096,6 +1096,8 @@ MonoBehaviour:
   - {fileID: 468000737585659892, guid: b98381c2fc4739049b440b60015aed51, type: 3}
   enemyPrefabs:
   - {fileID: 2331113604142666243, guid: 30e8dea55dd56744089be7e00bf54579, type: 3}
+  potionPrefabs:
+  - {fileID: 7207437254259153904, guid: cf50d0b3c0457be46856a293b8668824, type: 3}
 --- !u!1 &1923909428
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,19 +1365,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerObject
       objectReference: {fileID: 0}
-    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
+    - target: {fileID: 5744420511690562349, guid: 8c943328f281de34c9c6187118e1e65b,
         type: 3}
-      propertyPath: m_Color.b
-      value: 0.8820755
+      propertyPath: baseVolume
+      value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
+    - target: {fileID: 6524623005881477076, guid: 8c943328f281de34c9c6187118e1e65b,
         type: 3}
-      propertyPath: m_Color.g
-      value: 0.9435702
-      objectReference: {fileID: 0}
-    - target: {fileID: 5279544582929459616, guid: 8c943328f281de34c9c6187118e1e65b,
-        type: 3}
-      propertyPath: m_Color.r
+      propertyPath: baseVolume
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6647570548171618242, guid: 8c943328f281de34c9c6187118e1e65b,
@@ -1388,11 +1385,84 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 1620936644}
+    - target: {fileID: 8068899562876200130, guid: 8c943328f281de34c9c6187118e1e65b,
+        type: 3}
+      propertyPath: baseVolume
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c943328f281de34c9c6187118e1e65b, type: 3}
+--- !u!1001 &4942329602684296883
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478703050512441826, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777002113105592530, guid: d71311475f583524a82896c5e17a50d4,
+        type: 3}
+      propertyPath: m_Name
+      value: DungeonMusic
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d71311475f583524a82896c5e17a50d4, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1406,3 +1476,4 @@ SceneRoots:
   - {fileID: 142928379}
   - {fileID: 2033903795}
   - {fileID: 1051563895}
+  - {fileID: 4942329602684296883}
