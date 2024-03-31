@@ -67,6 +67,7 @@ MonoBehaviour:
   damage: 2
   moveDelay: 0.8
   health: 5
+  isBoss: 1
 --- !u!95 &209296207463950217
 Animator:
   serializedVersion: 5

@@ -159,6 +159,7 @@ public class GameMap
         }
 
         // Spawn enemies
+        enemies = new List<EnemyPawn>();
         foreach ((Point, GameObject) e in dl.enemies)
         {
             Point point = e.Item1;
@@ -175,6 +176,7 @@ public class GameMap
                 Tile t = GetTileAtPoint(point);
                 ec.Ready(point, this);
                 t.pawn = ec.enemyPawn;
+                enemies.Add(ec.enemyPawn);
             }
             yield return null;
         }
@@ -201,6 +203,15 @@ public class GameMap
         }
 
         isLoading = false;
+    }
+
+    public bool isPointPassable(Point point) 
+    {
+        Tile t = GetTileAtPoint(point);
+
+        if (t != null)
+            return t.isPassable;
+        return false;
     }
 
     public void MovePlayerToSpawn(PlayerPawn playerPawn) 
@@ -340,6 +351,16 @@ public class GameMap
         }
     }
 
+    public void BossTrample(EnemyPawn enemyPawn) 
+    {
+        Tile t = GetTileAtPoint(enemyPawn.point);
+        if (t != null)
+        {
+            GameObject.Destroy(t.trigger.gameObject);
+            t.trigger = null;
+        }
+    }
+
 
     private class Tile
     {
@@ -393,7 +414,7 @@ public class GameMap
 
         if (!inBounds(point) || !map[point.x, point.z].isPassable || map[point.x, point.z].pawn != null)
             return false;
-        if (point == end && pawn.type != PawnType.Player)
+        if (point == end && enemies.Count == 0 && pawn.type != PawnType.Player)
             return false;
         return true;
     }

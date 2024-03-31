@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class EnemyPawn : Pawn
 {
@@ -65,6 +66,16 @@ public class EnemyPawn : Pawn
         return false;
     }
 
+    public override void Damage(int d)
+    {
+        if (enemyController.isBoss)
+        {
+            gameMap.BossTrample(this);
+        }
+
+        base.Damage(d);
+    }
+
     public bool MoveTowardsPlayer(PlayerPawn playerPawn) 
     {
         if (playerPawn == null)
@@ -90,7 +101,17 @@ public class EnemyPawn : Pawn
         dz = Mathf.Clamp(playerPawn.point.z - point.z, -1, 1);
 
         if (dx != 0 && dz != 0)
-            dx = 0;
+        {
+            // Check x direction
+            if (gameMap.isPointPassable(new Point(point.x + dx, point.z)))
+            {
+                dz = 0;
+            }
+            else 
+            {
+                dx = 0;
+            }
+        }
 
         return (dx, dz);
     }

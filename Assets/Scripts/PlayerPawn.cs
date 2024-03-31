@@ -18,7 +18,7 @@ public class PlayerPawn : Pawn
     public int maxStamina { get; private set; } = 3;
     public int curStamina { get; private set; } = 2;
     public float toNextStamina { get; private set; } = 0f;
-    public float regenStaminaTime { get; private set; } = 0.75f;
+    public float regenStaminaTime { get; private set; } = 0.7f;
 
     public int skillPoints { get; private set; } = 1;
 

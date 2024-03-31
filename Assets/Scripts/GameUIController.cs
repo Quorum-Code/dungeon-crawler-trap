@@ -10,6 +10,7 @@ public class GameUIController : MonoBehaviour
     [SerializeField] GameObject settings;
 
     [SerializeField] GameObject deathScreen;
+    [SerializeField] TMP_Text deathText;
 
     [SerializeField] GameObject skillScreen;
     [SerializeField] TMP_Text skillPointText;
@@ -106,6 +107,7 @@ public class GameUIController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         deathScreen.SetActive(true);
+        deathText.text = gameController.GetLevelHint();
     }
 
     public void RestartLevelButton() 

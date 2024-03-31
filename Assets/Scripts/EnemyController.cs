@@ -168,6 +168,7 @@ public class EnemyController : MonoBehaviour
 
             yield return null;
         }
+        chase = null;
     }
 
     public void Death() 

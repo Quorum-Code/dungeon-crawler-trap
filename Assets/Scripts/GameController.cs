@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     GameMap gm;
 
     int level = 0;
+    public string[] levelHints; 
 
     int lastMaxHp;
     int lastCurHp;
@@ -28,6 +29,15 @@ public class GameController : MonoBehaviour
         gm.isLoading = true;
         StartCoroutine(gm.LoadDungeon(mapConfig.DungeonByLevel(level)));
         StartCoroutine(WaitForLoading());
+    }
+
+    public string GetLevelHint() 
+    {
+        if (levelHints.Length > level) 
+        {
+            return levelHints[level];
+        }
+        return "Keep trying.";
     }
 
     public void RestartLevel() 
