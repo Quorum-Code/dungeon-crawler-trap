@@ -25,6 +25,18 @@ public class PlayerPawn : Pawn
         
     }
 
+    public void Reset(GameMap gameMap) 
+    {
+        this.gameMap = gameMap;
+        gameMap.MovePlayerToSpawn(this);
+        facing = Direction.North;
+    }
+
+    public void SetGameMap(GameMap gameMap) 
+    {
+        this.gameMap = gameMap;
+    }
+
     public override void AddXp(int xp)
     {
         base.AddXp(xp);

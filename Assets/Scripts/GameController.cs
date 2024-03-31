@@ -40,6 +40,7 @@ public class GameController : MonoBehaviour
     private void FoundEnd() 
     {
         playerController.guic.BlackoutScreen();
+        playerController.canMove = false;
 
         gm.isLoading = true;
         StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon1()));

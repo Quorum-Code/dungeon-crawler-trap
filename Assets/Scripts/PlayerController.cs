@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource shoveSource;
     [SerializeField] private AudioSource bumpSource;
     [SerializeField] private AudioSource potionSource;
-    private PlayerInput playerInput;
     private GameMap gameMap;
 
     IEnumerator animate;
@@ -26,6 +25,8 @@ public class PlayerController : MonoBehaviour
     QueuedEvent qe;
     InputAction.CallbackContext qeContext;
 
+    public bool canMove = false;
+
     public void Ready() 
     {
         if (gameController == null)
@@ -34,12 +35,12 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
         gameMap = gameController.GetGameMap();
-        if (playerPawn == null) 
+
+        if (playerPawn == null)
         {
             playerPawn = new PlayerPawn(gameMap.spawn.x, gameMap.spawn.z, gameObject, gameMap);
 
             // UI events
-            guic.Init(playerPawn);
             playerPawn.updateHealth = HealthChange;
             playerPawn.updateXp = XpChange;
             playerPawn.updateStamina = StaminaChange;
@@ -48,7 +49,15 @@ public class PlayerController : MonoBehaviour
             playerPawn.bumpEvent = BumpEvent;
             playerPawn.healEvent = HealEvent;
         }
-            
+        else 
+        {
+            playerPawn.Reset(gameMap);
+            playerPawn.SetGameMap(gameMap);
+            gameMap.MovePlayerToSpawn(playerPawn);
+        }
+
+        guic.Init(playerPawn);
+
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
@@ -62,7 +71,7 @@ public class PlayerController : MonoBehaviour
             ConnectInputEvents();
         }
 
-        playerInput = GetComponent<PlayerInput>();
+        canMove = true;
         animate = null;
     }
 
@@ -213,7 +222,7 @@ public class PlayerController : MonoBehaviour
 
     private void TryMove(int dx, int dz) 
     {
-        if (gameMap == null)
+        if (gameMap == null || !canMove)
             return;
 
         if (playerPawn.curStamina > 0 && animate == null)
@@ -238,7 +247,7 @@ public class PlayerController : MonoBehaviour
 
     private void TryTurn(bool isLeftTurn)
     {
-        if (animate == null)
+        if (animate == null && canMove)
         {
             if (isLeftTurn)
             {

@@ -183,114 +183,9 @@ public class GameMap
         isLoading = false;
     }
 
-    private void InstanceDungeon(DungeonLayout dl)
+    public void MovePlayerToSpawn(PlayerPawn playerPawn) 
     {
-        ClearDungeon();
-
-        width = dl.GetWidth();
-        length = dl.GetLength();
-
-        PopulateMap();
-
-        GameObject g;
-        for (int j = 0; j < dl.layout.Count; j++)
-        {
-            char[] s = dl.layout[j].ToCharArray();
-            for (int i = 0; i < s.Length; i++)
-            {
-                // Open tile
-                if (s[i] == ' ' || s[i] == 'S')
-                {
-                    g = GameObject.Instantiate(dl.tilePrefab);
-                    map[i, j].SetPassable(true);
-                }
-                // Wall tile
-                else if (s[i] == 'E') 
-                {
-                    g = GameObject.Instantiate(dl.exitPrefab);
-                    endObject = g;
-                    map[i, j].SetPassable(true);
-                    end = new Point(i, j);
-                }
-                else
-                {
-                    g = GameObject.Instantiate(dl.wallPrefab);
-                    map[i, j].SetPassable(false);
-                }
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(i, .5f, j);
-
-                // Set spawn point
-                if (s[i] == 'S')
-                {
-                    spawn = new Point(i, j);
-                }
-            }
-        }
-
-        if (dl.trapNetwork != null) 
-        {
-            List<Trap> traps = new List<Trap>();
-            List<Trigger> triggers = new List<Trigger>();
-            foreach (Point point in dl.trapNetwork.traps)
-            {
-                g = GameObject.Instantiate(dl.trapPrefab);
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(point.x, 0.5f, point.z);
-                Trap t = g.GetComponent<Trap>();
-                if (t != null)
-                {
-                    traps.Add(t);
-                    t.gameMap = this;
-                    t.point = point;
-                }
-            }
-
-            foreach (Point point in dl.trapNetwork.triggers)
-            {
-                g = GameObject.Instantiate(dl.triggerPrefab);
-                g.transform.SetParent(config.mapParent.transform);
-                g.transform.position = new Vector3(point.x, 0.5f, point.z);
-                Trigger t = g.GetComponent<Trigger>();
-                if (t != null)
-                {
-                    t.point = point;
-                    triggers.Add(t);
-                    t.gameMap = this;
-                    t.AddTraps(traps);
-                    Tile tile = GetTileAtPoint(point);
-                    if (tile != null)
-                    {
-                        tile.trigger = t;
-                    }
-                }
-            }
-
-            foreach (Trap t in traps)
-            {
-                t.AddTriggers(triggers);
-            }
-        }
-
-        foreach ((Point, GameObject) e in dl.enemies) 
-        {
-            Point point = e.Item1;
-
-            if (!inBounds(point))
-                continue;
-
-            g = GameObject.Instantiate(e.Item2);
-            g.transform.SetParent(config.mapParent.transform);
-            g.transform.position = new Vector3(point.x, 0.5f, point.z);
-            EnemyController ec = g.GetComponent<EnemyController>();
-            if (ec != null) 
-            {
-                Tile t = GetTileAtPoint(point);
-                ec.Ready(point, this);
-                t.pawn = ec.enemyPawn;
-                Debug.Log("enemyController found");
-            }
-        }
+        MovePawnTo(playerPawn, spawn);
     }
 
     public bool isPlayerAtPoint(Point point) 
@@ -498,6 +393,7 @@ public class GameMap
         {
             map[nextPoint.x, nextPoint.z].pawn = pawn;
         }
+        pawn.point.Set(nextPoint);
     }
 
     public void RemovePawnAtPoint(Point point) 

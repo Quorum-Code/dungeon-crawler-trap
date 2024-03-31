@@ -96,6 +96,8 @@ public class EnemyController : MonoBehaviour
             yield return null;
         }
 
+        init = new Vector3(enemyPawn.point.x, 0.5f, enemyPawn.point.z);
+
         t = 0f;
         while (t < end)
         {
