@@ -18,6 +18,8 @@ public class Pawn
     public int maxHealth { get; protected set; } = 3;
     public int health { get; protected set; } = 3;
 
+    public int xp { get; protected set; } = 0;
+
     protected int Str = 0;
     protected int Dex = 0;
     protected int Vit = 0;
@@ -48,7 +50,7 @@ public class Pawn
 
     public virtual void AddXp(int xp) 
     {
-
+        this.xp += xp;
     }
 
     public virtual void Notify(PlayerPawn playerPawn) 

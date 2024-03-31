@@ -10,8 +10,6 @@ public class GameController : MonoBehaviour
     [SerializeField] GameUIController guic;
     GameMap gm;
 
-    bool waiting = true;
-
     // Start is called before the first frame update
     void Start()
     {

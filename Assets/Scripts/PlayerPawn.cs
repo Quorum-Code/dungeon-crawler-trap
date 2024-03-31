@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerPawn : Pawn
 {
-    public int xp;
-
     public delegate void UpdateUI();
 
     public UpdateUI tookDamage;
@@ -25,6 +23,12 @@ public class PlayerPawn : Pawn
     public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Player)
     {
         
+    }
+
+    public override void AddXp(int xp)
+    {
+        base.AddXp(xp);
+        updateXp();
     }
 
     public void IncStaminaTime(float time) 

@@ -90,7 +90,7 @@ public class GameUIController : MonoBehaviour
 
     public void SetXp(int xp) 
     {
-        xpImage.sprite = xpBar[xp];
+        xpImage.sprite = xpBar[xp % xpBar.Length];
     }
 
     public void UpdateStaminaProgress(PlayerPawn playerPawn) 

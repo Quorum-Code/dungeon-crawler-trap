@@ -64,6 +64,11 @@ public class EnemyController : MonoBehaviour
 
         if (enemyPawn.health <= 0) 
         {
+            if (playerPawn != null)
+                playerPawn.AddXp(2);
+            else
+                Debug.LogError("playerController null?");
+
             // play death anim
             animator.Play("SlimeDeath");
         }
@@ -155,7 +160,6 @@ public class EnemyController : MonoBehaviour
 
             yield return null;
         }
-        Debug.Log("Chase ended");
     }
 
     public void Death() 

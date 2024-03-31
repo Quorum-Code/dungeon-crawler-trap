@@ -34,19 +34,23 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
         gameMap = gameController.GetGameMap();
-        playerPawn = new PlayerPawn(gameMap.spawn.x, gameMap.spawn.z, gameObject, gameMap);
+        if (playerPawn == null) 
+        {
+            playerPawn = new PlayerPawn(gameMap.spawn.x, gameMap.spawn.z, gameObject, gameMap);
+
+            // UI events
+            guic.Init(playerPawn);
+            playerPawn.updateHealth = HealthChange;
+            playerPawn.updateXp = XpChange;
+            playerPawn.updateStamina = StaminaChange;
+            playerPawn.tookDamage = TookDamageEvent;
+            playerPawn.shoveEvent = ShoveEvent;
+            playerPawn.bumpEvent = BumpEvent;
+            playerPawn.healEvent = HealEvent;
+        }
+            
         transform.position = new Vector3(playerPawn.point.x, 0, playerPawn.point.z);
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
-
-        // UI events
-        guic.Init(playerPawn);
-        playerPawn.updateHealth = HealthChange;
-        playerPawn.updateXp = XpChange;
-        playerPawn.updateStamina = StaminaChange;
-        playerPawn.tookDamage = TookDamageEvent;
-        playerPawn.shoveEvent = ShoveEvent;
-        playerPawn.bumpEvent = BumpEvent;
-        playerPawn.healEvent = HealEvent;
 
         if (inputAsset == null)
         {
@@ -113,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
     private void XpChange() 
     {
-        guic.SetHealth(playerPawn.xp);
+        guic.SetXp(playerPawn.xp);
     }
 
     private void ConnectInputEvents() 
@@ -253,13 +257,14 @@ public class PlayerController : MonoBehaviour
     {
         animate = null;
 
+        gameMap.NotifyEnemies(playerPawn);
+
         if (qe != null)
         {
             qeContext = new InputAction.CallbackContext();
             qe(qeContext);
             qe = null;
         }
-        gameMap.NotifyEnemies(playerPawn);
     }
 
     private IEnumerator AnimateMove() 
