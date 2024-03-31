@@ -22,6 +22,7 @@ public class Potion : Pawn
     public override void Interact(Pawn pawn)
     {
         pawn.Damage(-1);
+        pawn.AddXp(2);
         gameMap.RemovePawnAtPoint(point);
         GameObject.Destroy(gameObject);
     }

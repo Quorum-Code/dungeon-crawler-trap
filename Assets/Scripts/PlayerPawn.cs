@@ -20,6 +20,8 @@ public class PlayerPawn : Pawn
     public float toNextStamina { get; private set; } = 0f;
     public float regenStaminaTime { get; private set; } = 0.75f;
 
+    public int skillPoints { get; private set; } = 1;
+
     public PlayerPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Player)
     {
         
@@ -57,10 +59,36 @@ public class PlayerPawn : Pawn
         this.gameMap = gameMap;
     }
 
-    public override void AddXp(int xp)
+    public override void AddXp(int xpToAdd)
     {
-        base.AddXp(xp);
+        base.AddXp(xpToAdd);
+
+        if (xp > 5) 
+        {
+            skillPoints += xp / 6;
+            xp %= 6;
+        }
+
         updateXp();
+    }
+
+    public void AddVit() 
+    {
+        if (skillPoints > 0) 
+        {
+            skillPoints--;
+            SetMaxHealth(maxHealth + 1);
+            SetCurHealth(health + 1);
+        }
+    }
+
+    public void AddDex() 
+    {
+        if (skillPoints > 0)
+        {
+            skillPoints--;
+            SetMaxStamina(maxStamina + 1);
+        }
     }
 
     public void IncStaminaTime(float time) 

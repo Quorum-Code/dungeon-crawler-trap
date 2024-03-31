@@ -10,6 +10,8 @@ public class EnemyPawn : Pawn
     PawnMoved pm;
     IEnumerator animate;
 
+    int damage = 1;
+
     public EnemyPawn(int x, int z, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Enemy) 
     {
         enemyController = gameObject.GetComponent<EnemyController>();
@@ -20,6 +22,19 @@ public class EnemyPawn : Pawn
         }
 
         health = 1;
+    }
+
+    public EnemyPawn(int x, int z, int damage, int health, GameObject gameObject, GameMap gameMap) : base(x, z, gameObject, gameMap, PawnType.Enemy) 
+    {
+        enemyController = gameObject.GetComponent<EnemyController>();
+        if (enemyController != null)
+        {
+            enemyController.enemyPawn = this;
+            pm = enemyController.PawnMoved;
+        }
+
+        this.health = health;
+        this.damage = damage;
     }
 
     public override bool Move(int x, int z) 
@@ -38,7 +53,7 @@ public class EnemyPawn : Pawn
         }
         else if (gameMap.isPlayerAtPoint(nextPoint))
         {
-            enemyController.playerPawn.Damage(1);
+            enemyController.playerPawn.Damage(damage);
 
             pm();
             return true;

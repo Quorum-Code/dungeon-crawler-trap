@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,11 @@ public class GameUIController : MonoBehaviour
     [SerializeField] GameObject settings;
 
     [SerializeField] GameObject deathScreen;
+
+    [SerializeField] GameObject skillScreen;
+    [SerializeField] TMP_Text skillPointText;
+    [SerializeField] TMP_Text vitText;
+    [SerializeField] TMP_Text dexText;
 
     [SerializeField] GameObject heartParent;
     [SerializeField] Image xpImage;
@@ -32,8 +38,18 @@ public class GameUIController : MonoBehaviour
     List<GameObject> hearts = new List<GameObject>();
     List<GameObject> stams = new List<GameObject>();
 
+    PlayerPawn playerPawn;
+
+    private void Start()
+    {
+        blackout.gameObject.SetActive(true);
+        blackout.enabled = true;
+    }
+
     public void Init(PlayerPawn playerPawn) 
     {
+        this.playerPawn = playerPawn;
+
         SetMaxHealth(playerPawn.maxHealth);
         SetHealth(playerPawn.health);
         SetXp(playerPawn.xp);
@@ -50,7 +66,40 @@ public class GameUIController : MonoBehaviour
 
     public void OpenSkillMenu() 
     {
+        // Load stats into screen
+        skillScreen.SetActive(true);
 
+        Cursor.lockState = CursorLockMode.None;
+
+        LoadSkillStats();
+    }
+
+    public void LoadSkillStats() 
+    {
+        skillPointText.text = "Points available: " + playerPawn.skillPoints;
+        vitText.text = "VIT: " + playerPawn.maxHealth;
+        dexText.text = "DEX: " + playerPawn.maxStamina;
+    }
+
+    public void AddVit() 
+    {
+        playerPawn.AddVit();
+        SetMaxHealth(playerPawn.maxHealth);
+        SetHealth(playerPawn.health);
+        LoadSkillStats();
+    }
+
+    public void AddDex() 
+    {
+        playerPawn.AddDex();
+        SetStamina(playerPawn);
+        LoadSkillStats();
+    }
+
+    public void CloseSkillMenu() 
+    {
+        skillScreen.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void OpenDeathScreen() 
@@ -193,6 +242,9 @@ public class GameUIController : MonoBehaviour
 
     private IEnumerator FadeBlackout() 
     {
+        blackout.gameObject.SetActive(true);
+        blackout.enabled = true;
+
         float timer = 0;
         float total = 0.3f;
         while (timer < 0.3f) 

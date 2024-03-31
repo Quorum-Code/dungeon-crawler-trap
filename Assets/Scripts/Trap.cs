@@ -11,8 +11,6 @@ public class Trap : MonoBehaviour
 
     public void Activate() 
     {
-        //Debug.Log("trap activated!");
-
         if (gameMap != null) 
         {
             Pawn p = gameMap.GetPawnAtPoint(point);
@@ -20,6 +18,7 @@ public class Trap : MonoBehaviour
             {
                 //Debug.Log("damaged done to a pawn");
                 p.Damage(1);
+                p.AddXp(1);
             }
         }
 

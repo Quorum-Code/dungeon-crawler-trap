@@ -16,9 +16,15 @@ public class EnemyController : MonoBehaviour
     public PlayerPawn playerPawn;
     public bool isMoving = false;
 
+    public int damage = 1;
+    public float moveDelay = 1f;
+    public int health = 1;
+
+    public bool isBoss = false;
+
     public void Ready(Point point, GameMap gameMap) 
     {
-        enemyPawn = new EnemyPawn(point.x, point.z, gameObject, gameMap);
+        enemyPawn = new EnemyPawn(point.x, point.z, damage, health, gameObject, gameMap);
     }
 
     public void PawnMoved() 
@@ -65,7 +71,7 @@ public class EnemyController : MonoBehaviour
         if (enemyPawn.health <= 0) 
         {
             if (playerPawn != null)
-                playerPawn.AddXp(2);
+                playerPawn.AddXp(3);
             else
                 Debug.LogError("playerController null?");
 
@@ -128,7 +134,7 @@ public class EnemyController : MonoBehaviour
         surpriseObject.SetActive(true);
 
         float total = 0f;
-        float timer = 1f;
+        float timer = moveDelay;
 
         // Wait for 1s
         while (total < timer) 
