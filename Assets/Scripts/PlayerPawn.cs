@@ -25,6 +25,26 @@ public class PlayerPawn : Pawn
         
     }
 
+    public void SetMaxHealth(int maxHealth) 
+    {
+        this.maxHealth = maxHealth;
+    }
+
+    public void SetCurHealth(int curHealth) 
+    {
+        this.health = curHealth;
+    }
+
+    public void SetMaxStamina(int maxStamina) 
+    {
+        this.maxStamina = maxStamina;
+    }
+
+    public void SetXp(int xp) 
+    {
+        this.xp = xp;
+    }
+
     public void Reset(GameMap gameMap) 
     {
         this.gameMap = gameMap;

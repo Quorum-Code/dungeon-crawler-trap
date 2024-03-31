@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -10,6 +11,13 @@ public class GameController : MonoBehaviour
     [SerializeField] GameUIController guic;
     GameMap gm;
 
+    int level = 0;
+
+    int lastMaxHp;
+    int lastCurHp;
+    int lastMaxStamina;
+    int lastXp;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +26,30 @@ public class GameController : MonoBehaviour
         gm = new GameMap(mapConfig);
         gm.endFound = FoundEnd;
         gm.isLoading = true;
-        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon1()));
+        StartCoroutine(gm.LoadDungeon(mapConfig.DungeonByLevel(level)));
+        StartCoroutine(WaitForLoading());
+    }
+
+    public void RestartLevel() 
+    {
+        StartCoroutine(gm.LoadDungeon(mapConfig.DungeonByLevel(level)));
+        StartCoroutine(WaitForLoading());
+        LoadLastPlayerStats();
+    }
+
+    public void NextLevel() 
+    {
+        level++;
+        gm.isLoading = true;
+        MapConfig.DungeonLayout dl = mapConfig.DungeonByLevel(level);
+
+        if (dl == null) 
+        {
+            SceneManager.LoadScene(2);
+            return;
+        }
+
+        StartCoroutine(gm.LoadDungeon(dl));
         StartCoroutine(WaitForLoading());
     }
 
@@ -29,7 +60,31 @@ public class GameController : MonoBehaviour
             yield return null;
         }
         playerController.Ready();
+        GetPlayerStats();
         guic.FadeScreenOut();
+    }
+
+    private void GetPlayerStats() 
+    {
+        if (playerController.playerPawn == null)
+            return;
+        else 
+        {
+            lastMaxHp = playerController.playerPawn.maxHealth;
+            lastCurHp = playerController.playerPawn.health;
+            lastMaxStamina = playerController.playerPawn.maxStamina;
+            lastXp = playerController.playerPawn.xp;
+        }
+    }
+
+    private void LoadLastPlayerStats() 
+    {
+        PlayerPawn p = playerController.playerPawn;
+
+        p.SetMaxHealth(lastMaxHp);
+        p.SetCurHealth(lastCurHp);
+        p.SetMaxStamina(lastMaxStamina);
+        p.SetXp(lastXp);
     }
 
     public GameMap GetGameMap() 
@@ -42,8 +97,6 @@ public class GameController : MonoBehaviour
         playerController.guic.BlackoutScreen();
         playerController.canMove = false;
 
-        gm.isLoading = true;
-        StartCoroutine(gm.LoadDungeon(mapConfig.Dungeon1()));
-        StartCoroutine(WaitForLoading());
+        NextLevel();
     }
 }

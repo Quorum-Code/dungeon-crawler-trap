@@ -30,4 +30,9 @@ public class Trigger : MonoBehaviour
     {
         traps.AddRange(newTraps);
     }
+
+    public void AddTrap(Trap trap) 
+    {
+        traps.Add(trap);
+    }
 }

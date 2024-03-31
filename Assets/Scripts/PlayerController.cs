@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     private GameMap gameMap;
 
     IEnumerator animate;
-    PlayerPawn playerPawn;
+    public PlayerPawn playerPawn { get; private set; }
 
     [SerializeField] GameController gameController;
 
@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour
     InputAction.CallbackContext qeContext;
 
     public bool canMove = false;
+
+    public void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     public void Ready() 
     {
@@ -122,6 +127,13 @@ public class PlayerController : MonoBehaviour
     private void HealthChange() 
     {
         guic.SetHealth(playerPawn.health);
+
+        if (playerPawn.health <= 0) 
+        {
+            guic.OpenDeathScreen();
+            Debug.Log("open death screen with button to reset level");
+            canMove = false;
+        }
     }
 
     private void XpChange() 
@@ -145,6 +157,19 @@ public class PlayerController : MonoBehaviour
 
         dungeonControls.FindAction("TurnLeft").performed += TurnLeftEvent;
         dungeonControls.FindAction("TurnRight").performed += TurnRightEvent;
+
+        dungeonControls.FindAction("Escape").performed += EscapeEvent;
+        dungeonControls.FindAction("Skills").performed += SkillsEvent;
+    }
+
+    private void EscapeEvent(InputAction.CallbackContext context) 
+    {
+        guic.OpenSettings();
+    }
+
+    private void SkillsEvent(InputAction.CallbackContext context)
+    {
+        guic.OpenSkillMenu();
     }
 
     private void ForwardEvent(InputAction.CallbackContext context) 

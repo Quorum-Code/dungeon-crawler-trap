@@ -18,6 +18,24 @@ public class MapConfig : MonoBehaviour
 
     private DungeonLayout[] dungeons;
 
+    public DungeonLayout DungeonByLevel(int level) 
+    {
+        if (level == 0)
+            return Dungeon0();
+        if (level == 1)
+            return Dungeon1();
+        if (level == 2)
+            return Dungeon2();
+        if (level == 3)
+            return Dungeon3();
+        if (level == 4)
+            return Dungeon4();
+        if (level == 5)
+            return Dungeon5();
+
+        return null;
+    }
+
     public DungeonLayout Dungeon0() 
     {
         DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
@@ -35,22 +53,141 @@ public class MapConfig : MonoBehaviour
     {
         DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
 
-        d.AddLine("XXEXXXX");
+        d.AddLine("XXXEXXX");
         d.AddLine("X     X");
         d.AddLine("X     X");
         d.AddLine("X     X");
-        d.AddLine("X S   X");
+        d.AddLine("X     X");
+        d.AddLine("X  S  X");
         d.AddLine("XXXXXXX");
 
         d.triggerPrefab = triggerPrefabs[0];
         d.trapPrefab = trapPrefabs[0];
         d.trapNetwork = new DungeonLayout.TrapNetwork();
+
         d.trapNetwork.traps.Add(new Point(1, 4));
         d.trapNetwork.triggers.Add(new Point(1, 4));
+        d.trapNetwork.traps.Add(new Point(2, 4));
+        d.trapNetwork.triggers.Add(new Point(2, 4));
+        d.trapNetwork.traps.Add(new Point(3, 4));
+        d.trapNetwork.triggers.Add(new Point(3, 4));
+        d.trapNetwork.traps.Add(new Point(4, 4));
+        d.trapNetwork.triggers.Add(new Point(4, 4));
+        d.trapNetwork.traps.Add(new Point(5, 4));
+        d.trapNetwork.triggers.Add(new Point(5, 4));
 
-        d.AddEnemy(new Point(3, 3), enemyPrefabs[0]);
+        d.AddEnemy(new Point(3, 5), enemyPrefabs[0]);
 
         d.AddPotion(new Point(1, 1), potionPrefabs[0]);
+
+        return d;
+    }
+
+    public DungeonLayout Dungeon2()
+    {
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
+
+        d.AddLine("XXXXXXX");
+        d.AddLine("X XXXEX");
+        d.AddLine("X     X");
+        d.AddLine("X XXXXX");
+        d.AddLine("X X");
+        d.AddLine("XSX");
+        d.AddLine("XXX");
+
+        d.triggerPrefab = triggerPrefabs[0];
+        d.trapPrefab = trapPrefabs[0];
+        d.trapNetwork = new DungeonLayout.TrapNetwork();
+
+        d.trapNetwork.traps.Add(new Point(1, 5));
+        d.trapNetwork.triggers.Add(new Point(1, 5));
+
+        d.AddEnemy(new Point(1, 4), enemyPrefabs[0]);
+
+        return d;
+    }
+
+    public DungeonLayout Dungeon3()
+    {
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
+
+        d.AddLine("XXXXXXXXXXXEXX"); // 2
+        d.AddLine("X   T  X     X"); // 1
+        d.AddLine("X      X XXXXX"); // 0
+        d.AddLine("X  T   X     X"); // 9
+        d.AddLine("X XXXXXXXX   X"); // 8
+        d.AddLine("X            X"); // 7
+        d.AddLine("X XXXXXX XXXXX"); // 6
+        d.AddLine("X      X X   X"); // 5
+        d.AddLine("X  XXX XXX X X"); // 4
+        d.AddLine("X    X     X X"); // 3
+        d.AddLine("XX X X XXXXX X"); // 2
+        d.AddLine("X  X XSX     X"); // 1
+        d.AddLine("XXXXXXXXXXXXXX"); // 0
+
+        d.triggerPrefab = triggerPrefabs[0];
+        d.trapPrefab = trapPrefabs[0];
+        d.trapNetwork = new DungeonLayout.TrapNetwork();
+
+        d.AddEnemy(new Point(5, 10), enemyPrefabs[0]);
+        d.AddPotion(new Point(6, 11), potionPrefabs[0]);
+
+        d.AddPotion(new Point(8, 1), potionPrefabs[0]);
+
+
+        return d;
+    }
+
+    public DungeonLayout Dungeon4()
+    {
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
+
+        d.AddLine("XXXXEXXXX");
+        d.AddLine("X       X");
+        d.AddLine("X T T T X");
+        d.AddLine("X       X");
+        d.AddLine("X T T T X");
+        d.AddLine("X       X");
+        d.AddLine("X T T T X");
+        d.AddLine("X   S   X");
+        d.AddLine("XXXXXXXXX");
+
+        d.triggerPrefab = triggerPrefabs[0];
+        d.trapPrefab = trapPrefabs[0];
+        d.trapNetwork = new DungeonLayout.TrapNetwork();
+
+        d.AddEnemy(new Point(1, 5), enemyPrefabs[0]);
+        d.AddEnemy(new Point(2, 5), enemyPrefabs[0]);
+        d.AddEnemy(new Point(3, 5), enemyPrefabs[0]);
+        d.AddEnemy(new Point(4, 5), enemyPrefabs[0]);
+        d.AddEnemy(new Point(5, 5), enemyPrefabs[0]);
+
+        return d;
+    }
+
+    public DungeonLayout Dungeon5()
+    {
+        DungeonLayout d = new DungeonLayout(tilePrefabs[0], wallPrefabs[0], exitPrefab);
+
+        d.AddLine("XXXXXXXXXXXXXEX"); // 2
+        d.AddLine("X T           X"); // 1
+        d.AddLine("X XTXTXTXTXTXXX"); // 0
+        d.AddLine("X   T       X"); // 9
+        d.AddLine("XTX X XTXTXTX"); // 8
+        d.AddLine("X   T   T   X"); // 7
+        d.AddLine("X XTXTX XTXTX"); // 6
+        d.AddLine("X   T       X"); // 5
+        d.AddLine("XTX XTXTX XTX"); // 4
+        d.AddLine("X     T     X"); // 3
+        d.AddLine("X XTX X XTXTX"); // 2
+        d.AddLine("X     S     X"); // 1
+        d.AddLine("XXXXXXXXXXXXX"); // 0
+
+        d.triggerPrefab = triggerPrefabs[0];
+        d.trapPrefab = trapPrefabs[0];
+        d.trapNetwork = new DungeonLayout.TrapNetwork();
+
+        d.AddPotion(new Point(1, 11), potionPrefabs[0]);
 
         return d;
     }

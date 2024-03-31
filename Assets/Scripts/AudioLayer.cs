@@ -26,7 +26,6 @@ public class AudioLayer : MonoBehaviour
 
     private void OnAudioChanged(object sender, EventArgs e) 
     {
-        Debug.Log("changed audio level!");
         UpdateAudioVolume();
     }
 
@@ -34,11 +33,19 @@ public class AudioLayer : MonoBehaviour
     {
         audioSource.volume = baseVolume * AudioManager.getMultiplier(audioType);
     }
+
+    private void OnDestroy()
+    {
+        AudioManager.OnAudioChanged -= OnAudioChanged;
+    }
 }
 
 public static class AudioManager 
 {
     public static event EventHandler OnAudioChanged;
+
+    public static bool isMusicOn { get; private set; } = true;
+    public static bool isSFXOn { get; private set; } = true;
 
     public static float musicMultiplier { get; private set; } = 0.1f;
     public static float sfxMultiplier { get; private set; } = 0.1f;
@@ -62,15 +69,33 @@ public static class AudioManager
             OnAudioChanged(null, EventArgs.Empty);
     }
 
+    public static void setMusicOn(bool isOn) 
+    {
+        isMusicOn = isOn;
+        OnAudioChanged(null, EventArgs.Empty);
+    }
+
+    public static void setSFXOn(bool isOn) 
+    {
+        isSFXOn = isOn;
+        OnAudioChanged(null, EventArgs.Empty);
+    }
+
     public static float getMultiplier(AudioType type) 
     {
         if (type == AudioType.Music)
         {
-            return musicMultiplier;
+            if (isMusicOn)
+                return musicMultiplier;
+            else
+                return 0f;
         }
         else 
         {
-            return sfxMultiplier;
+            if (isSFXOn)
+                return sfxMultiplier;
+            else
+                return 0f;
         }
     }
 }

@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour
 {
+    [SerializeField] GameController gameController;
+    [SerializeField] GameObject settings;
+
+    [SerializeField] GameObject deathScreen;
+
     [SerializeField] GameObject heartParent;
     [SerializeField] Image xpImage;
 
@@ -15,7 +20,6 @@ public class GameUIController : MonoBehaviour
     [SerializeField] GameObject staminaProgress;
     [SerializeField] Color filledColor;
     Image staminaImage;
-    Transform nextStaminaTransform;
 
     [SerializeField] Sprite fullHeart;
     [SerializeField] Sprite emptyHeart;
@@ -36,6 +40,30 @@ public class GameUIController : MonoBehaviour
 
         staminaImage = staminaProgress.GetComponent<Image>();
         SetStamina(playerPawn);
+    }
+
+    public void OpenSettings() 
+    {
+        Cursor.lockState = CursorLockMode.None;
+        settings.SetActive(true);
+    }
+
+    public void OpenSkillMenu() 
+    {
+
+    }
+
+    public void OpenDeathScreen() 
+    {
+        Cursor.lockState = CursorLockMode.None;
+        deathScreen.SetActive(true);
+    }
+
+    public void RestartLevelButton() 
+    {
+        deathScreen.SetActive(false);
+        BlackoutScreen();
+        gameController.RestartLevel();
     }
 
     public void SetMaxHealth(int max) 

@@ -61,8 +61,28 @@ public class GameMap
             char[] s = dl.layout[j].ToCharArray();
             for (int i = 0; i < s.Length; i++)
             {
+                if (s[i] == 'T')
+                {
+                    g = GameObject.Instantiate(dl.trapPrefab);
+                    g.transform.SetParent(config.mapParent.transform);
+                    g.transform.position = new Vector3(i, .5f, j);
+                    Trap trap = g.GetComponent<Trap>();
+                    trap.gameMap = this;
+                    trap.point = new Point(i, j);
+
+                    g = GameObject.Instantiate(dl.triggerPrefab);
+                    g.transform.SetParent(config.mapParent.transform);
+                    g.transform.position = new Vector3(i, .5f, j);
+                    Trigger trigger = g.GetComponent<Trigger>();
+
+                    GetTileAtPoint(trap.point).trigger = trigger;
+
+                    trap.AddTrigger(trigger);
+                    trigger.AddTrap(trap);
+                }
+
                 // Open tile
-                if (s[i] == ' ' || s[i] == 'S')
+                if (s[i] == ' ' || s[i] == 'S' || s[i] == 'T')
                 {
                     g = GameObject.Instantiate(dl.tilePrefab);
                     map[i, j].SetPassable(true);

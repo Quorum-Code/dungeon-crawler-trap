@@ -24,6 +24,9 @@ public class EnemyPawn : Pawn
 
     public override bool Move(int x, int z) 
     {
+        if (health <= 0)
+            return false;
+
         Point nextPoint = new Point(x, z);
         if (gameMap.canMoveTo(this, nextPoint))
         {

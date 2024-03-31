@@ -12,3 +12,4 @@ Trip the Trap is a game about uncovering the secrets of an ancient dungeon, spec
 - [Monster & Giant Asset Pack](https://deepdivegamestudio.itch.io/monstergiantassetpack), by DeepDiveGameStudio.
 - [Undead Asset Pack](https://deepdivegamestudio.itch.io/undead-asset-pack), by DeepDiveGameStudio.
 - [Pixeloid](https://ggbot.itch.io/pixeloid-font), by GGBotNet.
+- [Minifantasy SFX Bundle](https://leohpaz.itch.io/minifantasy-dungeon-sfx-pack), by Leohpaz.
